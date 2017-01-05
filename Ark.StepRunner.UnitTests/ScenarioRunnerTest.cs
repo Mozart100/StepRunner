@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Ark.StepRunner.UnitTests
 {
+    using Ark.StepRunner.Exceptions;
+
     [TestClass]
     public class ScenarioRunnerTest
     {
@@ -82,7 +84,7 @@ namespace Ark.StepRunner.UnitTests
             var queue = new StepTrack<int>();
             var scenarioRunner = new ScenarioRunner();
 
-            var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(queue , 1,"111",2,"222");
+            var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(queue, 1, "111", 2, "222");
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
@@ -90,8 +92,28 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step3);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step4);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
 
 
+        [TestMethod]
+        public void ScenarioRunner_RunAllStepsWithATimeoutException()
+        {
+            const int numberScenarioStepInvoked = 2;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<int>();
+            var scenarioRunner = new ScenarioRunner();
+
+            var result = scenarioRunner.RunScenario<RunStepsAndFaileDueToTimeout>(queue);
+
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.IsTrue(result.Exception is AScenarioStepTimeoutException);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
         }
 
     }
@@ -113,14 +135,14 @@ namespace Ark.StepRunner.UnitTests
 
         public TType Dequeue()
         {
-             return _queue.Dequeue(); 
+            return _queue.Dequeue();
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         public void Enqueue(TType item)
         {
-              _queue.Enqueue(item); 
+            _queue.Enqueue(item);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------    

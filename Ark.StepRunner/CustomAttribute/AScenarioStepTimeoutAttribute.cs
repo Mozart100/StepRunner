@@ -1,39 +1,33 @@
 ﻿using System;
 
-namespace Ark.StepRunner
+namespace Ark.StepRunner.CustomAttribute
 {
-    public class ScenarioResult
+    [AttributeUsage(AttributeTargets.Method)]
+    public class AScenarioStepTimeoutAttribute : Attribute
     {
-        private readonly bool _isSuccessful;
-        private readonly int _numberScenarioStepInvoked;
-        private readonly Exception _exception;
-
+        private readonly TimeSpan _timeout;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioResult(bool isSuccessful, int numberScenarioStepInvoked, Exception exception)
+        public AScenarioStepTimeoutAttribute(int seconds)
+            : this(new TimeSpan(0, 0, seconds))
         {
-            _isSuccessful = isSuccessful;
-            _numberScenarioStepInvoked = numberScenarioStepInvoked;
-            _exception = exception;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-
-        public bool IsSuccessful => _isSuccessful;
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
-
-        public int NumberScenarioStepInvoked => _numberScenarioStepInvoked;
+        private AScenarioStepTimeoutAttribute(TimeSpan timeout)
+        {
+            _timeout = timeout;
+        }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
-
-        public Exception Exception => _exception;
+        public TimeSpan Timeout
+        {
+            get { return _timeout; }
+        }
     }
-
-
 }

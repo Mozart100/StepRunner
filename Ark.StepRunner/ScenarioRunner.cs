@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Ark.StepRunner.CustomAttribute;
 using Ark.StepRunner.Exceptions;
 using Ark.StepRunner.ScenarioStepResult;
+using System.Threading;
 
 namespace Ark.StepRunner
 {
@@ -25,12 +26,14 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------    
 
         private readonly Dictionary<int, MethodInfo> _scenarioSteps;
+        private MethodInvoker _methodInvoker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         public ScenarioRunner()
         {
+            _methodInvoker = new MethodInvoker();
             _scenarioSteps = new Dictionary<int, MethodInfo>();
         }
 
@@ -64,42 +67,49 @@ namespace Ark.StepRunner
             for (int index = 0; index < orderedMethods.Count;)
             {
                 var method = orderedMethods[index].Value;
+                var timeout = ExtractTimeout(method);
+
+                numberInvokedSteps++;
+                ScenarioStepReturnBase scenarioStepResult = null;
                 try
                 {
-                    numberInvokedSteps++;
-                    var scenarioStepResult = method.Invoke(scenario, parameters: previousParameters) as ScenarioStepReturnBase;
-
-                    //TODO Refactoring.
-                    if (scenarioStepResult == null)
-                    {
-                        scenarioStepResult = new ScenarioStepReturnVoid();
-                    }
-
-                    previousParameters = scenarioStepResult.Parameters;
-
-                    var scenarioStepJumpToStep = scenarioStepResult as ScenarioStepJumpToStep;
-                    if (scenarioStepJumpToStep != null)
-                    {
-                        for (int i = index + 1; i < orderedMethods.Count; i++)
-                        {
-                            if ( orderedMethods[i].Key == scenarioStepJumpToStep.IndexToJumpToStep)
-                            {
-                                index = i;
-                                break;
-                            }
-                        }
-                        //TODO elsewhere  throw exception.
-                    }
-                    else
-                    {
-                        index++;
-                    }
-
+                    scenarioStepResult = _methodInvoker.MethodInvoke<TScenario>(
+                        scenario,
+                        method,
+                        timeout,
+                        previousParameters);
+                }
+                catch (AScenarioStepTimeoutException timeoutException)
+                {
+                    return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: timeoutException); ;
                 }
                 catch (Exception exception)
                 {
-                    return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: exception);
+                    return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: exception); ;
                 }
+
+                previousParameters = scenarioStepResult.Parameters;
+
+                var scenarioStepJumpToStep = scenarioStepResult as ScenarioStepJumpToStep;
+
+                if (scenarioStepJumpToStep != null)
+                {
+                    for (int i = index + 1; i < orderedMethods.Count; i++)
+                    {
+                        if (orderedMethods[i].Key == scenarioStepJumpToStep.IndexToJumpToStep)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                    //TODO elsewhere  throw exception.
+                }
+                else
+                {
+                    index++;
+                }
+
+
             }
 
             return new ScenarioResult(isSuccessful: true, numberScenarioStepInvoked: numberInvokedSteps, exception: null); ;
@@ -132,6 +142,98 @@ namespace Ark.StepRunner
                 }
             }
             return true;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private TimeSpan ExtractTimeout(MethodInfo method)
+        {
+            var attribute = method.GetCustomAttribute(typeof(AScenarioStepTimeoutAttribute)) as AScenarioStepTimeoutAttribute;
+
+            if (attribute != null)
+            {
+                return attribute.Timeout;
+            }
+
+            return TimeSpan.Zero;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private class MethodInvoker
+        {
+            private ManualResetEvent _manuelResetEvent;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public MethodInvoker()
+            {
+                _manuelResetEvent = new ManualResetEvent(initialState: false);
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public ScenarioStepReturnBase MethodInvoke<TScenario>(
+                TScenario scenario,
+                MethodInfo methodInfo,
+                TimeSpan timeout,
+                params object[] parameters)
+            {
+                if (timeout == TimeSpan.Zero)
+                {
+                    _manuelResetEvent.Set();
+                }
+                else
+                {
+                    _manuelResetEvent.Reset();
+                }
+
+
+                var task = Invoke<TScenario>(scenario, methodInfo, parameters);
+
+                if (_manuelResetEvent.WaitOne(timeout: timeout) == false)
+                {
+                    try
+                    {
+                        task.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        throw new AScenarioStepTimeoutException();
+                    }
+                }
+
+
+                return task.Result;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------    
+
+            private async Task<ScenarioStepReturnBase> Invoke<TScenario>(
+              TScenario scenario,
+              MethodInfo method,
+              params object[] parameters)
+            {
+                ScenarioStepReturnBase methodResult = null;
+
+
+                var task = Task.Run(() =>
+                 {
+                     methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
+                     _manuelResetEvent.Set();
+                 });
+                await task;
+
+
+                return methodResult ?? new ScenarioStepReturnVoid();
+            }
+
         }
     }
 }

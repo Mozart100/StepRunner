@@ -41,8 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomAttribute\AScenarioAttribute.cs" />
+    <Compile Include="CustomAttribute\AScenarioStepTimeoutAttribute.cs" />
     <Compile Include="CustomAttribute\AStepScenarioAttribute.cs" />
     <Compile Include="Exceptions\AScenarioMissingAttributeException.cs" />
+    <Compile Include="Exceptions\AScenarioStepTimeoutException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScenarioResult.cs" />
     <Compile Include="ScenarioRunner.cs" />
