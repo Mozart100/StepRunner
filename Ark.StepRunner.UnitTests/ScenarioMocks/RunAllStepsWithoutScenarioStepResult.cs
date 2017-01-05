@@ -4,10 +4,10 @@ using Ark.StepRunner.CustomAttribute;
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
     [AScenario(description: "test scenario")]
-    public class RunAllStepsWithoutScenarioStepResult
+    internal class RunAllStepsWithoutScenarioStepResult
     {
 
-        public enum StepsForRunAllStepsWithoutScenarioStepResult
+        internal enum StepsForRunAllStepsWithoutScenarioStepResult
         {
             Step1,
             Step2,

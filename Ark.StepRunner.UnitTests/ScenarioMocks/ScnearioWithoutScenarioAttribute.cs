@@ -2,9 +2,9 @@ using Ark.StepRunner.CustomAttribute;
 
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
-    public class ScnearioWithoutScenarioAttribute
+    internal class ScnearioWithoutScenarioAttribute
     {
-        public ScnearioWithoutScenarioAttribute()
+        internal ScnearioWithoutScenarioAttribute()
         {
 
         }

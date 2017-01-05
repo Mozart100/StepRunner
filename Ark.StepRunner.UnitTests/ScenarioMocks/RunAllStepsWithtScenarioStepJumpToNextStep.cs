@@ -5,9 +5,9 @@ using Ark.StepRunner.ScenarioStepResult;
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
     [AScenario(description: "test scenario")]
-    public class RunAllStepsWithtScenarioStepJumpToNextStep
+    internal class RunAllStepsWithtScenarioStepJumpToNextStep
     {
-        public enum StepsForRunAllStepsWithtScenarioStepJumpToNextStep
+        internal enum StepsForRunAllStepsWithtScenarioStepJumpToNextStep
         {
             Step1,
             Step2,

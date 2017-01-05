@@ -6,10 +6,10 @@ using Ark.StepRunner.ScenarioStepResult;
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
     [AScenario(description: "test scenario")]
-    public class RunAllStepsAndPassingParametersBetweenSteps
+    internal class RunAllStepsAndPassingParametersBetweenSteps
     {
 
-        public enum StepsForRunAllStepsAndPassingParametersBetweenSteps
+        internal enum StepsForRunAllStepsAndPassingParametersBetweenSteps
         {
             Step1,
             Step2,

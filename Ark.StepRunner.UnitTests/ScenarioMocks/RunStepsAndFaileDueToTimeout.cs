@@ -8,10 +8,10 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     using System;
 
     [AScenario(description: "test scenario")]
-    public class RunStepsAndFaileDueToTimeout
+    internal class RunStepsAndFaileDueToTimeout
     {
 
-        public enum StepsForRunAllStepsAndFaileDueToTimeout
+        internal enum StepsForRunAllStepsAndFaileDueToTimeout
         {
             Step1,
             Step2,

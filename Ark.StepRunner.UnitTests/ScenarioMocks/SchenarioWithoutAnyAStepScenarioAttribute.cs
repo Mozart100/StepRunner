@@ -3,9 +3,9 @@ using Ark.StepRunner.CustomAttribute;
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
     [AScenario(description: "test scenario")]
-    public class SchenarioWithoutAnyAStepScenarioAttribute
+    internal class SchenarioWithoutAnyAStepScenarioAttribute
     {
-        public SchenarioWithoutAnyAStepScenarioAttribute()
+        internal SchenarioWithoutAnyAStepScenarioAttribute()
         {
 
         }
