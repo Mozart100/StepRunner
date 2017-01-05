@@ -56,10 +56,12 @@
     <Compile Include="ScenarioMocks\RunAllStepsAndPassingParametersBetweenSteps.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsWithoutScenarioStepResult.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsWithtScenarioStepJumpToNextStep.cs" />
+    <Compile Include="ScenarioMocks\ScenarioStopRunningAfterException.cs" />
     <Compile Include="ScenarioRunnerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScenarioMocks\SchenarioWithoutAnyAStepScenarioAttribute.cs" />
     <Compile Include="ScenarioMocks\ScnearioWithoutScenarioAttribute.cs" />
+    <Compile Include="StepTrack.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ark.StepRunner\Ark.StepRunner.csproj">

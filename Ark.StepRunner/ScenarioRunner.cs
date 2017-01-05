@@ -23,6 +23,29 @@ namespace Ark.StepRunner
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private class ScenarioStepReturnException : ScenarioStepReturnBase
+        {
+            private readonly Exception _exception;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public ScenarioStepReturnException(Exception exception)
+                : base(parameters: null)
+            {
+                _exception = exception;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            public Exception Exception => _exception;
+        }
+
+
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------    
 
         private readonly Dictionary<int, MethodInfo> _scenarioSteps;
@@ -193,23 +216,35 @@ namespace Ark.StepRunner
                     _manuelResetEvent.Reset();
                 }
 
+                ScenarioStepReturnBase result = null;
 
-                var task = Invoke<TScenario>(scenario, methodInfo, parameters);
-
-                if (_manuelResetEvent.WaitOne(timeout: timeout) == false)
+                Task<ScenarioStepReturnBase> task = null;
+                try
                 {
-                    try
+                    task = Invoke<TScenario>(scenario, methodInfo, parameters);
+
+
+                    if (_manuelResetEvent.WaitOne(timeout: timeout) == false)
                     {
-                        task.Dispose();
+                        try
+                        {
+                            task.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                            throw new AScenarioStepTimeoutException();
+                        }
+                      
                     }
-                    catch (Exception)
-                    {
-                        throw new AScenarioStepTimeoutException();
-                    }
+                    result = task.Result;
                 }
+                catch (Exception exception)
+                {
+                    throw exception.InnerException ?? exception;
+                }
+           
 
-
-                return task.Result;
+                return result;
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -221,15 +256,31 @@ namespace Ark.StepRunner
               params object[] parameters)
             {
                 ScenarioStepReturnBase methodResult = null;
-
+                ScenarioStepReturnException mainException = null;
+                Exception methodException = null;
 
                 var task = Task.Run(() =>
-                 {
-                     methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
-                     _manuelResetEvent.Set();
-                 });
+                {
+                    //methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
+                    try
+                    {
+                        methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
+                    }
+                    catch (Exception exception)
+                    {
+                        //throw exception;
+                        //mainException = new ScenarioStepReturnException(exception.InnerException);
+                        methodException = exception.InnerException;
+                    }
+                    _manuelResetEvent.Set();
+                });
                 await task;
 
+
+                if (methodException != null)
+                {
+                    throw methodException;
+                }
 
                 return methodResult ?? new ScenarioStepReturnVoid();
             }
