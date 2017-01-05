@@ -5,11 +5,25 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Ark.StepRunner.CustomAttribute;
+using Ark.StepRunner.Exceptions;
+using Ark.StepRunner.ScenarioStepResult;
 
 namespace Ark.StepRunner
 {
     public class ScenarioRunner
     {
+        private class ScenarioStepReturnVoid : ScenarioStepReturnBase
+        {
+            public ScenarioStepReturnVoid()
+                : base(parameters: null)
+            {
+
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------    
+
         private readonly Dictionary<int, MethodInfo> _scenarioSteps;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -23,12 +37,12 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public bool RunScenario<TScenario>(params object[] parameters)
+        public ScenarioResult RunScenario<TScenario>(params object[] parameters)
         {
 
             if (AssembleMethDataForScenario<TScenario>() == false)
             {
-                return false;
+                return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exception: new AScenarioMissingAttributeException());
             }
 
             var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
@@ -40,23 +54,55 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private bool RunScenario<TScenario>(TScenario scenario)
+        private ScenarioResult RunScenario<TScenario>(TScenario scenario)
         {
-            var orderedMethods = _scenarioSteps.OrderBy(x => x.Key).Select(x => x.Value).ToList();
+            var orderedMethods = _scenarioSteps.OrderBy(x => x.Key).ToList();
 
-            foreach (var method in orderedMethods)
+            int numberInvokedSteps = 0;
+            object[] previousParameters = null;
+
+            for (int index = 0; index < orderedMethods.Count;)
             {
+                var method = orderedMethods[index].Value;
                 try
                 {
-                    method.Invoke(scenario, parameters: null);
+                    numberInvokedSteps++;
+                    var scenarioStepResult = method.Invoke(scenario, parameters: previousParameters) as ScenarioStepReturnBase;
+
+                    //TODO Refactoring.
+                    if (scenarioStepResult == null)
+                    {
+                        scenarioStepResult = new ScenarioStepReturnVoid();
+                    }
+
+                    previousParameters = scenarioStepResult.Parameters;
+
+                    var scenarioStepJumpToStep = scenarioStepResult as ScenarioStepJumpToStep;
+                    if (scenarioStepJumpToStep != null)
+                    {
+                        for (int i = index + 1; i < orderedMethods.Count; i++)
+                        {
+                            if ( orderedMethods[i].Key == scenarioStepJumpToStep.IndexToJumpToStep)
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                        //TODO elsewhere  throw exception.
+                    }
+                    else
+                    {
+                        index++;
+                    }
+
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    return false;
+                    return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: exception);
                 }
             }
 
-            return true;
+            return new ScenarioResult(isSuccessful: true, numberScenarioStepInvoked: numberInvokedSteps, exception: null); ;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -70,7 +116,7 @@ namespace Ark.StepRunner
 
             foreach (var method in typeof(TScenario).GetMethods())
             {
-                
+
                 var attribute = method.GetCustomAttribute(typeof(AStepScenarioAttribute)) as AStepScenarioAttribute;
 
                 if (attribute != null)

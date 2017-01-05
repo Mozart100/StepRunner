@@ -1,28 +1,21 @@
-﻿using System;
-
-namespace Ark.StepRunner.CustomAttribute
+﻿namespace Ark.StepRunner.ScenarioStepResult
 {
-    [AttributeUsage(AttributeTargets.Method)]
-    public class AStepScenarioAttribute : System.Attribute
+    public class ScenarioStepJumpToStep : ScenarioStepReturnBase
     {
-        private readonly int _index;
-        private readonly string _description;
+        private readonly int _indexToJumpToStep;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public AStepScenarioAttribute(int index, string description)
+        public ScenarioStepJumpToStep(int indexToJumpToStep, params object[] parameters)
+            : base(parameters)
         {
-            _index = index;
-            _description = description;
+            _indexToJumpToStep = indexToJumpToStep;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public int Index
-        {
-            get { return _index; }
-        }
+        public int IndexToJumpToStep => _indexToJumpToStep;
     }
 }
