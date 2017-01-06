@@ -149,12 +149,11 @@ namespace Ark.StepRunner.UnitTests
 
             var queue = new StepTrack<int>();
             var scenarioRunner = new ScenarioRunner();
-            string str = null;
+            string magicString = null;
 
-            var result = scenarioRunner.RunScenario<ScenarioWithNotNullAttributeInConstructor>(queue, str);
-
-            Assert.IsFalse(result.IsSuccessful);
-            Assert.IsTrue(result.Exception is AScenarioConstructorParameterNullException);
+            var result = scenarioRunner.RunScenario<ScenarioWithNotNullAttributeInConstructor>(queue, magicString);
+            var exception = result.Exception as AScenarioConstructorParameterNullException;
+            Assert.IsTrue(exception.ParameterName == "magicString");
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
         }
 

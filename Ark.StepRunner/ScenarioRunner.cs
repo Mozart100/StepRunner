@@ -173,9 +173,7 @@ namespace Ark.StepRunner
 
         private IEnumerable<AScenarioConstructorParameterNullException> NotNullLocator<TScenario>(TScenario scenario, params object[] parameters)
         {
-            var exception = new List<AScenarioConstructorParameterNullException>();
-
-            int index = 0;
+            var index = 0;
             foreach (var parameter in typeof(TScenario).GetConstructors().First().GetParameters())
             {
                 bool hasNotNullAttribute = parameter.CustomAttributes.Any(x => x.AttributeType == typeof(NotNullAttribute));
