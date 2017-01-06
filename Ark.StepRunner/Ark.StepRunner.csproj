@@ -43,6 +43,8 @@
     <Compile Include="CustomAttribute\AScenarioAttribute.cs" />
     <Compile Include="CustomAttribute\AScenarioStepTimeoutAttribute.cs" />
     <Compile Include="CustomAttribute\AStepScenarioAttribute.cs" />
+    <Compile Include="CustomAttribute\NotNullAttribute.cs" />
+    <Compile Include="Exceptions\AScenarioConstructorParameterNullException.cs" />
     <Compile Include="Exceptions\AScenarioMissingAttributeException.cs" />
     <Compile Include="Exceptions\AScenarioStepTimeoutException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

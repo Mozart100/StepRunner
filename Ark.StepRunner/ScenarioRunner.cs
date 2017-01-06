@@ -48,7 +48,18 @@ namespace Ark.StepRunner
                 return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exception: new AScenarioMissingAttributeException());
             }
 
+
             var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
+
+            var notNullList = NotNullLocator(scenario, parameters).ToList();
+
+            if (notNullList.Any())
+            {
+                return new ScenarioResult(isSuccessful: false,
+                    numberScenarioStepInvoked: 0,
+                    exception: notNullList.First());
+            }
+
 
             var result = RunScenario(scenario);
             return result;
@@ -159,6 +170,27 @@ namespace Ark.StepRunner
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private IEnumerable<AScenarioConstructorParameterNullException> NotNullLocator<TScenario>(TScenario scenario, params object[] parameters)
+        {
+            var exception = new List<AScenarioConstructorParameterNullException>();
+
+            int index = 0;
+            foreach (var parameter in typeof(TScenario).GetConstructors().First().GetParameters())
+            {
+                bool hasNotNullAttribute = parameter.CustomAttributes.Any(x => x.AttributeType == typeof(NotNullAttribute));
+                if (hasNotNullAttribute == true)
+                {
+                    if (parameters[index] == null)
+                    {
+                        yield return new AScenarioConstructorParameterNullException(parameterName: parameter.Name);
+                    }
+                }
+                index++;
+            }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -192,6 +224,8 @@ namespace Ark.StepRunner
                 {
                     _manuelResetEvent.Reset();
                 }
+
+
 
                 ScenarioStepReturnBase result = null;
 

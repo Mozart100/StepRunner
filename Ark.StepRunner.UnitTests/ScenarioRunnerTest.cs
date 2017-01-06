@@ -123,9 +123,9 @@ namespace Ark.StepRunner.UnitTests
         {
             const int numberScenarioStepInvoked = 2;
 
-            var expectedNullReferenceException =  new NullReferenceException();
-
             //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var expectedNullReferenceException = new NullReferenceException();
 
             var queue = new StepTrack<int>();
             var scenarioRunner = new ScenarioRunner();
@@ -137,6 +137,25 @@ namespace Ark.StepRunner.UnitTests
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
+        }
+
+
+        [TestMethod]
+        public void ScenarioRunner_ValidateNotNullAttribute_ReturnExceptionNotNull()
+        {
+            const int numberScenarioStepInvoked = 0;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<int>();
+            var scenarioRunner = new ScenarioRunner();
+            string str = null;
+
+            var result = scenarioRunner.RunScenario<ScenarioWithNotNullAttributeInConstructor>(queue, str);
+
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.IsTrue(result.Exception is AScenarioConstructorParameterNullException);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
         }
 
     }

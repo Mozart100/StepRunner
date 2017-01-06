@@ -1,22 +1,22 @@
-﻿using System;
-
-namespace Ark.StepRunner.CustomAttribute
+﻿namespace Ark.StepRunner.Exceptions
 {
-    //[AttributeUsage(AttributeTargets.Parameter)]
-    [AttributeUsage(AttributeTargets.Class)]
-    public class AScenarioAttribute : System.Attribute
+    using System;
+
+    public class AScenarioConstructorParameterNullException : Exception
     {
-        private readonly string _description;
+        private readonly string _parameterName;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public AScenarioAttribute(string description)
+        public AScenarioConstructorParameterNullException(string parameterName)
+            : base("In constructor a parameter was null.")
         {
-            _description = description;
+            _parameterName = parameterName;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
+        public string ParameterName => _parameterName;
     }
 }

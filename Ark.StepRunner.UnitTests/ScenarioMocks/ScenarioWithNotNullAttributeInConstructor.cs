@@ -1,14 +1,13 @@
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
-    using System;
     using System.Reflection;
     using Ark.StepRunner.CustomAttribute;
 
     [AScenario(description: "test scenario")]
-    internal class ScenarioStopRunningAfterException
+    internal class ScenarioWithNotNullAttributeInConstructor
     {
 
-        internal enum StepsForScenarioStopRunningAfterException
+        internal enum StepsForScenarioWithNotNullAttributeInConstructor
         {
             Step1,
             Step2,
@@ -16,22 +15,21 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         }
 
         private readonly StepTrack<int> _stepTracker;
-        private readonly NullReferenceException _nullReferenceExceptio;
+        private readonly string _magicString;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioStopRunningAfterException(StepTrack<int> stepTracker, NullReferenceException nullReferenceExceptio)
+        public ScenarioWithNotNullAttributeInConstructor(StepTrack<int> stepTracker, [NotNull] string magicString)
         {
-           
             _stepTracker = stepTracker;
-            _nullReferenceExceptio = nullReferenceExceptio;
+            _magicString = magicString;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForScenarioStopRunningAfterException.Step1, description: "RunScenario Method")]
+        [AStepScenario(index: (int)StepsForScenarioWithNotNullAttributeInConstructor.Step1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -44,7 +42,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForScenarioStopRunningAfterException.Step2, description: "RunScenario 5 Method")]
+        [AStepScenario(index: (int)StepsForScenarioWithNotNullAttributeInConstructor.Step2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -52,13 +50,12 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
             _stepTracker.Enqueue(attribute.Index);
 
-            throw _nullReferenceExceptio;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [AStepScenario(index: (int)StepsForScenarioStopRunningAfterException.Step3, description: "RunScenario  15 Method")]
+        [AStepScenario(index: (int)StepsForScenarioWithNotNullAttributeInConstructor.Step3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();

@@ -57,6 +57,7 @@
     <Compile Include="ScenarioMocks\RunAllStepsWithoutScenarioStepResult.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsWithtScenarioStepJumpToNextStep.cs" />
     <Compile Include="ScenarioMocks\ScenarioStopRunningAfterException.cs" />
+    <Compile Include="ScenarioMocks\ScenarioWithNotNullAttributeInConstructor.cs" />
     <Compile Include="ScenarioRunnerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScenarioMocks\SchenarioWithoutAnyAStepScenarioAttribute.cs" />

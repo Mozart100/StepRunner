@@ -1,19 +1,15 @@
-﻿using System;
-
-namespace Ark.StepRunner.CustomAttribute
+﻿namespace Ark.StepRunner.CustomAttribute
 {
-    //[AttributeUsage(AttributeTargets.Parameter)]
-    [AttributeUsage(AttributeTargets.Class)]
-    public class AScenarioAttribute : System.Attribute
+    using System;
+
+    public class NotNullAttribute : Attribute
     {
-        private readonly string _description;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public AScenarioAttribute(string description)
+        public NotNullAttribute()
         {
-            _description = description;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
