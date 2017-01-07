@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomAttribute\AExceptionIgnoreAttribute.cs" />
     <Compile Include="CustomAttribute\AScenarioAttribute.cs" />
     <Compile Include="CustomAttribute\AScenarioStepTimeoutAttribute.cs" />
     <Compile Include="CustomAttribute\AStepCleanupScenarioAttribute.cs" />

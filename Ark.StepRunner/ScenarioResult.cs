@@ -65,16 +65,41 @@ namespace Ark.StepRunner
 
             return result;
         }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public static ScenarioResult operator | (ScenarioResult scenarioResult1, ScenarioResult scenarioResult2)
+        {
+            var exceptions = new List<Exception>();
+            if (scenarioResult1.Exceptions != null)
+            {
+                exceptions.AddRange(scenarioResult1.Exceptions);
+            }
+
+            if (scenarioResult2.Exceptions != null)
+            {
+                exceptions.AddRange(scenarioResult2.Exceptions);
+            }
+
+            var result = new ScenarioResult(
+                isSuccessful: scenarioResult1.IsSuccessful | scenarioResult2.IsSuccessful,
+                numberScenarioStepInvoked: scenarioResult1.NumberScenarioStepInvoked + scenarioResult2.NumberScenarioStepInvoked,
+                exceptions: exceptions.ToArray());
+
+
+            return result;
+        }
     }
 
 
     public class EmptyScenarioResult : ScenarioResult
     {
-        public EmptyScenarioResult()
-            : base(isSuccessful: true, numberScenarioStepInvoked: 0, exceptions: null)
+        public EmptyScenarioResult(bool isSuccessful = true ,int numberScenarioStepInvoked = 0, Exception exception = null)
+            : base(isSuccessful: isSuccessful, numberScenarioStepInvoked: numberScenarioStepInvoked, exceptions: null)
         {
 
         }
+
     }
 
 

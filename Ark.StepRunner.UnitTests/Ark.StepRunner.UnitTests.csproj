@@ -63,6 +63,7 @@
     <Compile Include="ScenarioMocks\RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.cs" />
     <Compile Include="ScenarioMocks\RunAllSetupsAndBusinnesSteps.cs" />
     <Compile Include="ScenarioMocks\RunAllSetupsAndBusinnesStepsAndCleanups.cs" />
+    <Compile Include="ScenarioMocks\RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.cs" />
     <Compile Include="ScenarioMocks\RunStepsAndFaileDueToTimeout.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsAndPassingParametersBetweenSteps.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsWithoutScenarioStepResult.cs" />
