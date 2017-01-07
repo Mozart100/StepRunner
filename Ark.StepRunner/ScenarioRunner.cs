@@ -64,6 +64,10 @@ namespace Ark.StepRunner
 
         private readonly Dictionary<int, StepAndAttributeBundle> _scenarioSteps;
         private readonly Dictionary<int, StepAndAttributeBundle> _scenarioSetups;
+        private readonly Dictionary<int, StepAndAttributeBundle> _scenarioCleanups;
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
         private readonly MethodInvoker _methodInvoker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -76,6 +80,7 @@ namespace Ark.StepRunner
 
             _scenarioSteps = new Dictionary<int, StepAndAttributeBundle>();
             _scenarioSetups = new Dictionary<int, StepAndAttributeBundle>();
+            _scenarioCleanups = new Dictionary<int, StepAndAttributeBundle>();
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -111,22 +116,22 @@ namespace Ark.StepRunner
 
         private ScenarioResult RunScenario<TScenario>(TScenario scenario)
         {
-            var setupResult = RunScenarioStep(scenario, _scenarioSetups);
-            ScenarioResult businessSteps = null;
+            var setupStepsResult = RunScenarioStep(scenario, _scenarioSetups);
+            ScenarioResult businessStepsResult = null;
 
-            if (setupResult.IsSuccessful)
+            if (setupStepsResult.IsSuccessful)
             {
-                businessSteps = RunScenarioStep(scenario, _scenarioSteps);
+                businessStepsResult = RunScenarioStep(scenario, _scenarioSteps);
             }
 
-            
+            var cleanupStepsResult = RunScenarioStep(scenario, _scenarioCleanups);
 
-            return setupResult + businessSteps;
+            return setupStepsResult + businessStepsResult + cleanupStepsResult;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private ScenarioResult RunScenarioStep<TScenario>(TScenario scenario, 
+        private ScenarioResult RunScenarioStep<TScenario>(TScenario scenario,
             IDictionary<int, StepAndAttributeBundle> steps)
         {
             var orderedMethods = steps.OrderBy(x => x.Key).ToList();
@@ -160,7 +165,7 @@ namespace Ark.StepRunner
                         orderedMethods[index].Value.StepScenario.Description));
                     return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps,
                         exceptions: timeoutException);
-                    
+
                 }
                 catch (Exception exception)
                 {
@@ -212,7 +217,7 @@ namespace Ark.StepRunner
                 {
                     try
                     {
-                        _scenarioSetups.Add(setupAttribute.Index , new StepAndAttributeBundle(methodInfo: method, stepScenario: setupAttribute));
+                        _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, stepScenario: setupAttribute));
                         continue;
                     }
                     catch (Exception)
@@ -221,8 +226,22 @@ namespace Ark.StepRunner
                     }
                 }
 
-                var attribute = method.GetCustomAttribute(typeof(AStepScenarioAttribute)) as AStepScenarioAttribute;
+                var cleanupAttribute = method.GetCustomAttribute(typeof(AStepCleanupScenarioAttribute)) as AStepCleanupScenarioAttribute;
+                if (cleanupAttribute != null)
+                {
+                    try
+                    {
+                        _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, stepScenario: cleanupAttribute));
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
 
+
+                var attribute = method.GetCustomAttribute(typeof(AStepScenarioAttribute)) as AStepScenarioAttribute;
                 if (attribute != null)
                 {
                     try
