@@ -15,12 +15,12 @@
 
         }
 
-        private readonly StepTrack<AStepScenarioAttribute> _stepTracker;
+        private readonly StepTrack<ABusinessStepScenarioAttribute> _stepTracker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups(StepTrack<AStepScenarioAttribute> stepTracker)
+        public RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups(StepTrack<ABusinessStepScenarioAttribute> stepTracker)
         {
             _stepTracker = stepTracker;
         }
@@ -32,7 +32,7 @@
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -44,7 +44,7 @@
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -56,7 +56,7 @@
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -67,11 +67,11 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -80,11 +80,11 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
             throw new System.Exception();
@@ -93,11 +93,11 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
         }
@@ -113,7 +113,7 @@
         public void Cleanup1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -125,7 +125,7 @@
         public void Cleanup2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -137,7 +137,7 @@
         public void Cleanup3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 

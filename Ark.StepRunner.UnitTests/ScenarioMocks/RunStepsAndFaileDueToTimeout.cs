@@ -37,11 +37,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
             
 
-        [AStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute.Index);
 
@@ -51,11 +51,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         [AScenarioStepTimeout(seconds: 1)]
-        [AStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
             _stepTracker.Enqueue(attribute.Index);
 
             var task  = Task.Run(() => RunMethod4());
@@ -65,11 +65,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute.Index);
         }

@@ -30,7 +30,7 @@ namespace Ark.StepRunner
         private class StepAndAttributeBundle
         {
             private readonly MethodInfo _methodInfo;
-            private readonly AStepScenarioAttribute _stepScenario;
+            private readonly ABusinessStepScenarioAttribute _businessStepScenario;
             private readonly AExceptionIgnoreAttribute _exceptionIgnoreAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -38,11 +38,11 @@ namespace Ark.StepRunner
 
             public StepAndAttributeBundle(
                 MethodInfo methodInfo,
-                AStepScenarioAttribute stepScenario,
+                ABusinessStepScenarioAttribute businessStepScenario,
                 AExceptionIgnoreAttribute exceptionIgnoreAttribute)
             {
                 _methodInfo = methodInfo;
-                _stepScenario = stepScenario;
+                _businessStepScenario = businessStepScenario;
                 _exceptionIgnoreAttribute = exceptionIgnoreAttribute;
             }
 
@@ -53,7 +53,7 @@ namespace Ark.StepRunner
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            public AStepScenarioAttribute StepScenario => _stepScenario;
+            public ABusinessStepScenarioAttribute BusinessStepScenario => _businessStepScenario;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ namespace Ark.StepRunner
 
                 numberInvokedSteps++;
                 ScenarioResult scenarioResultCurrent;
-                var scenarioStepResult = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.StepScenario,
+                var scenarioStepResult = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario,
                     out scenarioResultCurrent);
 
                 scenarioResult += scenarioResultCurrent;
@@ -203,14 +203,14 @@ namespace Ark.StepRunner
             MethodInfo method,
             TimeSpan timeout,
             object[] previousParameters,
-            AStepScenarioAttribute stepScenario,
+            ABusinessStepScenarioAttribute businessStepScenario,
             out ScenarioResult scenarioResult)
         {
             scenarioResult = new EmptyScenarioResult(numberScenarioStepInvoked: 1);
             ScenarioStepReturnBase scenarioStepResult = null;
             try
             {
-                _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", stepScenario.Description));
+                _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", businessStepScenario.Description));
                 scenarioStepResult = _methodInvoker.MethodInvoke<TScenario>(
                     scenario,
                     method,
@@ -219,7 +219,7 @@ namespace Ark.StepRunner
             }
             catch (AScenarioStepTimeoutException timeoutException)
             {
-                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", stepScenario.Description));
+                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
                 {
                     scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
                     return new ScenarioStepReturnVoid();
@@ -228,7 +228,7 @@ namespace Ark.StepRunner
 
             catch (Exception exception)
             {
-                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", stepScenario.Description, exception));
+                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
 
                 {
                     scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
@@ -236,7 +236,7 @@ namespace Ark.StepRunner
                 }
             }
 
-            _stepPublisherLogger.Log(string.Format("[{0}] Step was finished successfully.", stepScenario.Description));
+            _stepPublisherLogger.Log(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
 
             return scenarioStepResult;
         }
@@ -258,7 +258,7 @@ namespace Ark.StepRunner
                 {
                     try
                     {
-                        _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, stepScenario: setupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
+                        _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
                         continue;
                     }
                     catch (Exception)
@@ -272,7 +272,7 @@ namespace Ark.StepRunner
                 {
                     try
                     {
-                        _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, stepScenario: cleanupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
+                        _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: cleanupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
                         continue;
                     }
                     catch (Exception)
@@ -282,12 +282,12 @@ namespace Ark.StepRunner
                 }
 
 
-                var attribute = method.GetCustomAttribute(typeof(AStepScenarioAttribute)) as AStepScenarioAttribute;
+                var attribute = method.GetCustomAttribute(typeof(ABusinessStepScenarioAttribute)) as ABusinessStepScenarioAttribute;
                 if (attribute != null)
                 {
                     try
                     {
-                        _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, stepScenario: attribute, exceptionIgnoreAttribute: ignoreAttribute));
+                        _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: ignoreAttribute));
                     }
                     catch (Exception)
                     {

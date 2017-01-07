@@ -3,7 +3,7 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class AStepSetupScenarioAttribute : AStepScenarioAttribute
+    public class AStepSetupScenarioAttribute : ABusinessStepScenarioAttribute
     {
         //private int _index;
 

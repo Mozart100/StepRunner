@@ -15,12 +15,12 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
             
         }
 
-        private readonly StepTrack<AStepScenarioAttribute> _stepTracker;
+        private readonly StepTrack<ABusinessStepScenarioAttribute> _stepTracker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public RunAllSetupsAndBusinnesSteps(StepTrack<AStepScenarioAttribute> stepTracker)
+        public RunAllSetupsAndBusinnesSteps(StepTrack<ABusinessStepScenarioAttribute> stepTracker)
         {
             _stepTracker = stepTracker;
         }
@@ -32,7 +32,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -44,7 +44,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -56,7 +56,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -67,11 +67,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
 
@@ -80,11 +80,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
         }
@@ -92,11 +92,11 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [AStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndBusinnesSteps.StepOrSetup3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
-            var attribute = (AStepScenarioAttribute)method.GetCustomAttributes(typeof(AStepScenarioAttribute), true)[0];
+            var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
 
             _stepTracker.Enqueue(attribute);
         }

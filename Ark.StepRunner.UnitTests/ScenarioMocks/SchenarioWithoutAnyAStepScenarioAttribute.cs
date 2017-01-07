@@ -10,7 +10,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         }
 
-        //[AStepScenarioAttribute(index: 1, description: "RunScenario Method")]
+        //[ABusinessStepScenarioAttribute(index: 1, description: "RunScenario Method")]
         public void RunMethod()
         {
 

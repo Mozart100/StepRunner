@@ -209,7 +209,7 @@ namespace Ark.StepRunner.UnitTests
             const int numberScenarioStepInvoked = 6;
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<AStepScenarioAttribute>();
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesSteps>(queue);
@@ -247,7 +247,7 @@ namespace Ark.StepRunner.UnitTests
             const int numberScenarioStepInvoked = 9;
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<AStepScenarioAttribute>();
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesStepsAndCleanups>(queue);
@@ -294,7 +294,7 @@ namespace Ark.StepRunner.UnitTests
             const int numberScenarioStepInvoked = 8;
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<AStepScenarioAttribute>();
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>(queue);
@@ -344,7 +344,7 @@ namespace Ark.StepRunner.UnitTests
             const int numberScenarioStepInvoked = 5;
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<AStepScenarioAttribute>();
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<ThrowExceptionInSetupsAndJumpToRunAllCleanups>(queue);
@@ -385,7 +385,7 @@ namespace Ark.StepRunner.UnitTests
             const int numberScenarioStepInvoked = 9;
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<AStepScenarioAttribute>();
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException>(queue);

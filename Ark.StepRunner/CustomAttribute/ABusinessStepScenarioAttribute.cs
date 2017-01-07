@@ -3,7 +3,7 @@
 namespace Ark.StepRunner.CustomAttribute
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class AStepScenarioAttribute : System.Attribute
+    public class ABusinessStepScenarioAttribute : System.Attribute
     {
         private readonly int _index;
         private readonly string _description;
@@ -11,7 +11,7 @@ namespace Ark.StepRunner.CustomAttribute
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public AStepScenarioAttribute(int index, string description)
+        public ABusinessStepScenarioAttribute(int index, string description)
         {
             _index = index;
             _description = description;

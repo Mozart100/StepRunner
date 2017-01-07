@@ -3,7 +3,7 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Method)]
-    public class AStepCleanupScenarioAttribute : AStepScenarioAttribute
+    public class AStepCleanupScenarioAttribute : ABusinessStepScenarioAttribute
     {
      
         public AStepCleanupScenarioAttribute(int index, string description)
