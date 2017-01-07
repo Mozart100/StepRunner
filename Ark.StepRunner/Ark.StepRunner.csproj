@@ -53,6 +53,7 @@
     <Compile Include="ScenarioStepResult\ScenarioStepJumpToStep.cs" />
     <Compile Include="ScenarioStepResult\ScenarioStepReturnNextStep.cs" />
     <Compile Include="ScenarioStepResult\ScenarioStepReturnBase.cs" />
+    <Compile Include="TraceLogger\IStepRunnerLogger.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

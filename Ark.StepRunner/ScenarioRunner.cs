@@ -11,6 +11,8 @@ using System.Threading;
 
 namespace Ark.StepRunner
 {
+    using Ark.StepRunner.TraceLogger;
+
     public class ScenarioRunner
     {
         private class ScenarioStepReturnVoid : ScenarioStepReturnBase
@@ -25,16 +27,51 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private readonly Dictionary<int, MethodInfo> _scenarioSteps;
+        private class StepAndAttributeBundle
+        {
+            private readonly MethodInfo _methodInfo;
+            private readonly AStepScenarioAttribute _stepScenario;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public StepAndAttributeBundle(MethodInfo methodInfo, AStepScenarioAttribute stepScenario)
+            {
+                _methodInfo = methodInfo;
+                _stepScenario = stepScenario;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            public MethodInfo MethodInfo => _methodInfo;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public AStepScenarioAttribute StepScenario
+            {
+                get { return _stepScenario; }
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        private readonly IStepPublisherLogger _stepPublisherLogger;
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private readonly Dictionary<int, StepAndAttributeBundle> _scenarioSteps;
         private readonly MethodInvoker _methodInvoker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioRunner()
+        public ScenarioRunner(IStepPublisherLogger stepPublisherLogger)
         {
+            _stepPublisherLogger = stepPublisherLogger;
             _methodInvoker = new MethodInvoker();
-            _scenarioSteps = new Dictionary<int, MethodInfo>();
+            _scenarioSteps = new Dictionary<int, StepAndAttributeBundle>();
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -72,30 +109,35 @@ namespace Ark.StepRunner
         {
             var orderedMethods = _scenarioSteps.OrderBy(x => x.Key).ToList();
 
-            int numberInvokedSteps = 0;
+            var numberInvokedSteps = 0;
             object[] previousParameters = null;
 
             for (int index = 0; index < orderedMethods.Count;)
             {
-                var method = orderedMethods[index].Value;
+                var method = orderedMethods[index].Value.MethodInfo;
                 var timeout = ExtractTimeout(method);
 
                 numberInvokedSteps++;
                 ScenarioStepReturnBase scenarioStepResult = null;
                 try
                 {
+                    _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", orderedMethods[index].Value.StepScenario.Description));
                     scenarioStepResult = _methodInvoker.MethodInvoke<TScenario>(
                         scenario,
                         method,
                         timeout,
                         previousParameters);
+
+                    _stepPublisherLogger.Log(string.Format("[{0}] Step was finished successfully.", orderedMethods[index].Value.StepScenario.Description));
                 }
                 catch (AScenarioStepTimeoutException timeoutException)
                 {
+                    _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", orderedMethods[index].Value.StepScenario.Description));
                     return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: timeoutException); ;
                 }
                 catch (Exception exception)
                 {
+                    _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", orderedMethods[index].Value.StepScenario.Description,exception));
                     return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: numberInvokedSteps, exception: exception); ;
                 }
 
@@ -144,7 +186,7 @@ namespace Ark.StepRunner
                 {
                     try
                     {
-                        _scenarioSteps[attribute.Index] = method;
+                        _scenarioSteps[attribute.Index] = new StepAndAttributeBundle(methodInfo: method, stepScenario: attribute);
                     }
                     catch (Exception)
                     {
@@ -214,6 +256,7 @@ namespace Ark.StepRunner
                 TimeSpan timeout,
                 params object[] parameters)
             {
+
                 if (timeout == TimeSpan.Zero)
                 {
                     _manuelResetEvent.Set();
@@ -267,7 +310,7 @@ namespace Ark.StepRunner
 
                 var task = Task.Run(() =>
                 {
-                    //methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
+                    //methodResult = methodInfo.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
                     try
                     {
                         methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;

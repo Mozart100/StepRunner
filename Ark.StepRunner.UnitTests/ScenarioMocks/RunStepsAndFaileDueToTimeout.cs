@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
 using Ark.StepRunner.CustomAttribute;
 
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
 {
-    using System;
+    
 
     [AScenario(description: "test scenario")]
-    internal class RunStepsAndFaileDueToTimeout
+    internal class RunStepsAndFaileDueToTimeout 
     {
 
         internal enum StepsForRunAllStepsAndFaileDueToTimeout
@@ -18,6 +19,9 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
             Step3,
             Step4
         }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
 
         private readonly StepTrack<int> _stepTracker;
 
@@ -31,6 +35,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
+            
 
         [AStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step1, description: "RunScenario Method")]
         public void RunMethod1()
@@ -59,7 +64,6 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
-
 
         [AStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step3, description: "RunScenario  15 Method")]
         public void RunMethod3()

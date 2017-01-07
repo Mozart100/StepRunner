@@ -1,20 +1,39 @@
 ﻿using System;
 using Ark.StepRunner;
 using Ark.StepRunner.UnitTests.ScenarioMocks;
+using Ark.StepRunner.Exceptions;
+using Ark.StepRunner.TraceLogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Ark.StepRunner.UnitTests
 {
-    using Ark.StepRunner.Exceptions;
+    using System.Collections.Generic;
 
 
     [TestClass]
     public class ScenarioRunnerTest
     {
+
+        private Mock<IStepPublisherLogger> _publisherLogger;
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            _publisherLogger = new Mock<IStepPublisherLogger>();
+        }
+
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
         [TestMethod]
         public void ScenarioRunner_IsAScenarioAttributeDefine_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -24,7 +43,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_IsAStepScenarioAttribute_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -39,7 +58,7 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllStepsWithoutScenarioStepResult>(queue);
 
@@ -61,7 +80,7 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>(queue);
 
@@ -82,7 +101,7 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(queue, 1, "111", 2, "222");
 
@@ -105,7 +124,7 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<RunStepsAndFaileDueToTimeout>(queue);
 
@@ -128,7 +147,7 @@ namespace Ark.StepRunner.UnitTests
             var expectedNullReferenceException = new NullReferenceException();
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
             var result = scenarioRunner.RunScenario<ScenarioStopRunningAfterException>(queue, expectedNullReferenceException);
 
@@ -148,7 +167,7 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
             string magicString = null;
 
             var result = scenarioRunner.RunScenario<ScenarioWithNotNullAttributeInConstructor>(queue, magicString);
@@ -157,6 +176,76 @@ namespace Ark.StepRunner.UnitTests
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
         }
 
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestMethod]
+        public void ScenarioRunner_Logger_TracesPublishingIntoLogger()
+        {
+            const int numberScenarioStepInvoked = 2;
+            var testLogger = new TestLogger();
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<int>();
+            var scenarioRunner = new ScenarioRunner(testLogger);
+
+            var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>(queue);
+
+
+            Assert.IsTrue(result.IsSuccessful);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step3);
+            Assert.IsTrue(testLogger.Queue.ToArray().Length >1);
+
+            
+
+        }
+
+    }
+
+
+    internal class TestLogger : IStepPublisherLogger
+    {
+        private readonly Queue<string> _queue;
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public TestLogger()
+        {
+            _queue = new Queue<string>();
+        }
+
+        public Queue<string> Queue => _queue;
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public void Debug(string message)
+        {
+            _queue.Enqueue(message);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public void Log(string message)
+        {
+            _queue.Enqueue(message);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public void Error(string message)
+        {
+            _queue.Enqueue(message);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        public void Warning(string message)
+        {
+            _queue.Enqueue(message);
+        }
     }
 }
 
