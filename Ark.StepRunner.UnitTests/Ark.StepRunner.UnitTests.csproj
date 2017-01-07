@@ -60,6 +60,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ScenarioMocks\RunAllSetupsAndBusinnesSteps.cs" />
     <Compile Include="ScenarioMocks\RunStepsAndFaileDueToTimeout.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsAndPassingParametersBetweenSteps.cs" />
     <Compile Include="ScenarioMocks\RunAllStepsWithoutScenarioStepResult.cs" />
