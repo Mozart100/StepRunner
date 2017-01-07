@@ -286,6 +286,97 @@ namespace Ark.StepRunner.UnitTests
 
         }
 
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestMethod]
+        public void ScenarioRunner_RunAllSetupsAnd2BusinessStepsAndAllCleanups_BusinessStepThrowException()
+        {
+            const int numberScenarioStepInvoked = 8;
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<AStepScenarioAttribute>();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+
+            var result = scenarioRunner.RunScenario<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>(queue);
+
+
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+
+            //Setups
+            var attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3);
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //BusinessSteps
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //Cleanups
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3);
+
+
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestMethod]
+        public void ScenarioRunner_RunAllSetupsUntilExceptionAndJumpToRunAndAllCleanups_SetupThrowException()
+        {
+            const int numberScenarioStepInvoked = 5;
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<AStepScenarioAttribute>();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+
+            var result = scenarioRunner.RunScenario<ThrowExceptionInSetupsAndJumpToRunAllCleanups>(queue);
+
+
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+
+            //Setups
+            var attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup1);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup2);
+
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            //Cleanups
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup1);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup2);
+
+            attribute = queue.Dequeue();
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup3);
+
+
+        }
+
     }
 
 

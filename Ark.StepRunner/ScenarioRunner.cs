@@ -117,7 +117,7 @@ namespace Ark.StepRunner
         private ScenarioResult RunScenario<TScenario>(TScenario scenario)
         {
             var setupStepsResult = RunScenarioStep(scenario, _scenarioSetups);
-            ScenarioResult businessStepsResult = null;
+            ScenarioResult businessStepsResult =  new EmptyScenarioResult();
 
             if (setupStepsResult.IsSuccessful)
             {

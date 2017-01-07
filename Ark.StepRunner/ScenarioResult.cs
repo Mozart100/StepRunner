@@ -36,7 +36,7 @@ namespace Ark.StepRunner
 
         public IEnumerable<Exception> Exceptions
         {
-            get { return _exceptions; }
+            get { return _exceptions ; }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public static ScenarioResult operator + (ScenarioResult scenarioResult1, ScenarioResult scenarioResult2)
+        public static ScenarioResult operator +(ScenarioResult scenarioResult1, ScenarioResult scenarioResult2)
         {
             var exceptions = new List<Exception>();
             if (scenarioResult1.Exceptions != null)
@@ -64,6 +64,16 @@ namespace Ark.StepRunner
 
 
             return result;
+        }
+    }
+
+
+    public class EmptyScenarioResult : ScenarioResult
+    {
+        public EmptyScenarioResult()
+            : base(isSuccessful: true, numberScenarioStepInvoked: 0, exceptions: null)
+        {
+
         }
     }
 
