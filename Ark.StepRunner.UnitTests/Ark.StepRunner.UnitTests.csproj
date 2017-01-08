@@ -60,6 +60,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ScenarioMocks\TimeoutAttributeMissingWhenParallelStepAttributeAppear.cs" />
     <Compile Include="ScenarioMocks\RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.cs" />
     <Compile Include="ScenarioMocks\RunAllSetupsAndBusinnesSteps.cs" />
     <Compile Include="ScenarioMocks\RunAllSetupsAndBusinnesStepsAndCleanups.cs" />

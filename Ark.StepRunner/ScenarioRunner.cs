@@ -32,18 +32,36 @@ namespace Ark.StepRunner
             private readonly MethodInfo _methodInfo;
             private readonly ABusinessStepScenarioAttribute _businessStepScenario;
             private readonly AExceptionIgnoreAttribute _exceptionIgnoreAttribute;
+            private readonly TimeSpan _timeout;
+            private readonly AScenarioStepTimeoutAttribute _scenarioStepTimeoutAttribute;
+            private readonly AScenarioStepParallelAttribute _scenarioStepParallelAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public StepAndAttributeBundle()
+            {
+
+            }
+
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             public StepAndAttributeBundle(
                 MethodInfo methodInfo,
                 ABusinessStepScenarioAttribute businessStepScenario,
-                AExceptionIgnoreAttribute exceptionIgnoreAttribute)
+                AExceptionIgnoreAttribute exceptionIgnoreAttribute,
+                AScenarioStepTimeoutAttribute scenarioStepTimeoutAttribute,
+                AScenarioStepParallelAttribute scenarioStepParallelAttribute)
             {
                 _methodInfo = methodInfo;
                 _businessStepScenario = businessStepScenario;
                 _exceptionIgnoreAttribute = exceptionIgnoreAttribute;
+                _scenarioStepTimeoutAttribute = scenarioStepTimeoutAttribute;
+                _scenarioStepParallelAttribute = scenarioStepParallelAttribute;
+
+                _timeout = ExtractTimeout(_methodInfo);
+
+                Initialize();
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -60,6 +78,44 @@ namespace Ark.StepRunner
             public AExceptionIgnoreAttribute ExceptionIgnoreAttribute => _exceptionIgnoreAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public AScenarioStepParallelAttribute ScenarioStepParallelAttribute => _scenarioStepParallelAttribute;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public TimeSpan Timeout => _timeout;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public AScenarioStepTimeoutAttribute ScenarioStepTimeoutAttribute => _scenarioStepTimeoutAttribute;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            private void Initialize()
+            {
+                if (_scenarioStepParallelAttribute != null)
+                {
+                    if (_scenarioStepTimeoutAttribute == null)
+                    {
+                        throw new AScenarioStepTimeoutAttributeMissinigException();
+                    }
+                }
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            private TimeSpan ExtractTimeout(MethodInfo method)
+            {
+                var attribute = method.GetCustomAttribute(typeof(AScenarioStepTimeoutAttribute)) as AScenarioStepTimeoutAttribute;
+
+                if (attribute != null)
+                {
+                    return attribute.Timeout;
+                }
+
+                return TimeSpan.Zero;
+            }
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -95,10 +151,13 @@ namespace Ark.StepRunner
 
         public ScenarioResult RunScenario<TScenario>(params object[] parameters)
         {
-
-            if (AssembleMethDataForScenario<TScenario>() == false)
+            try
             {
-                return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exceptions: new AScenarioMissingAttributeException());
+                AssembleMethDataForScenario<TScenario>();
+            }
+            catch (Exception exception)
+            {
+                return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exceptions: exception);
             }
 
 
@@ -152,7 +211,7 @@ namespace Ark.StepRunner
             for (int index = 0; index < orderedMethods.Count;)
             {
                 var method = orderedMethods[index].Value.MethodInfo;
-                var timeout = ExtractTimeout(method);
+                var timeout = orderedMethods[index].Value.Timeout;
 
                 numberInvokedSteps++;
                 ScenarioResult scenarioResultCurrent;
@@ -243,73 +302,39 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private bool AssembleMethDataForScenario<TScenario>()
+        private void AssembleMethDataForScenario<TScenario>()
         {
             if (Attribute.IsDefined(typeof(TScenario), typeof(AScenarioAttribute)) == false)
             {
-                return false;
+                throw new AScenarioMissingAttributeException();
             }
-            foreach (var method in typeof(TScenario).GetMethods())
+
+            foreach (var method in typeof(TScenario).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
-                var ignoreAttribute = method.GetCustomAttribute(typeof(AExceptionIgnoreAttribute)) as AExceptionIgnoreAttribute;
+                var exceptionIgnoreAttribute = method.GetCustomAttribute<AExceptionIgnoreAttribute>();
+                var scenarioStepParallelAttribute = method.GetCustomAttribute<AScenarioStepParallelAttribute>();
+                var timeoutAttribute = method.GetCustomAttribute<AScenarioStepTimeoutAttribute>();
 
                 var setupAttribute = method.GetCustomAttribute(typeof(AStepSetupScenarioAttribute)) as AStepSetupScenarioAttribute;
                 if (setupAttribute != null)
                 {
-                    try
-                    {
-                        _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
-                        continue;
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
+                    _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute,scenarioStepTimeoutAttribute:timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    continue;
                 }
 
                 var cleanupAttribute = method.GetCustomAttribute(typeof(AStepCleanupScenarioAttribute)) as AStepCleanupScenarioAttribute;
                 if (cleanupAttribute != null)
                 {
-                    try
-                    {
-                        _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: cleanupAttribute, exceptionIgnoreAttribute: ignoreAttribute));
-                        continue;
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
+                    _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: cleanupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    continue;
                 }
-
 
                 var attribute = method.GetCustomAttribute(typeof(ABusinessStepScenarioAttribute)) as ABusinessStepScenarioAttribute;
                 if (attribute != null)
                 {
-                    try
-                    {
-                        _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: ignoreAttribute));
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
+                    _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
                 }
             }
-            return true;
-        }
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
-
-        private TimeSpan ExtractTimeout(MethodInfo method)
-        {
-            var attribute = method.GetCustomAttribute(typeof(AScenarioStepTimeoutAttribute)) as AScenarioStepTimeoutAttribute;
-
-            if (attribute != null)
-            {
-                return attribute.Timeout;
-            }
-
-            return TimeSpan.Zero;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
