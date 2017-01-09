@@ -39,13 +39,6 @@ namespace Ark.StepRunner
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            public StepAndAttributeBundle()
-            {
-
-            }
-
-            //--------------------------------------------------------------------------------------------------------------------------------------
-
             public StepAndAttributeBundle(
                 MethodInfo methodInfo,
                 ABusinessStepScenarioAttribute businessStepScenario,
@@ -119,6 +112,31 @@ namespace Ark.StepRunner
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private class ScenarioStepReturnResultBundle
+        {
+            private readonly ScenarioStepReturnBase _scenarioSStepReturn;
+            private readonly ScenarioResult _scenarioResult;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public ScenarioStepReturnResultBundle(ScenarioStepReturnBase scenarioSStepReturn, ScenarioResult scenarioResult)
+            {
+                _scenarioSStepReturn = scenarioSStepReturn;
+                _scenarioResult = scenarioResult;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            //--------------------------------------------------------------------------------------------------------------------------------------
+            public ScenarioStepReturnBase ScenarioSStepReturn => _scenarioSStepReturn;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            public ScenarioResult ScenarioResult => _scenarioResult;
+        }
+
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         private readonly IStepPublisherLogger _stepPublisherLogger;
@@ -215,12 +233,11 @@ namespace Ark.StepRunner
 
                 numberInvokedSteps++;
                 ScenarioResult scenarioResultCurrent;
-                var scenarioStepResult = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario,
-                    out scenarioResultCurrent);
+                var scenarioStepResultBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
 
-                scenarioResult += scenarioResultCurrent;
+                scenarioResult += scenarioStepResultBundle.ScenarioResult;
 
-                if (scenarioResultCurrent.IsSuccessful == false)
+                if (scenarioStepResultBundle.ScenarioResult.IsSuccessful == false)
                 {
                     if (orderedMethods[index].Value.ExceptionIgnoreAttribute == null)
                     {
@@ -230,9 +247,9 @@ namespace Ark.StepRunner
                     scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
                 }
 
-                previousParameters = scenarioStepResult.Parameters;
+                previousParameters = scenarioStepResultBundle.ScenarioSStepReturn.Parameters;
 
-                var scenarioStepJumpToStep = scenarioStepResult as ScenarioStepJumpToStep;
+                var scenarioStepJumpToStep = scenarioStepResultBundle.ScenarioSStepReturn as ScenarioStepJumpToStep;
 
                 if (scenarioStepJumpToStep != null)
                 {
@@ -257,15 +274,13 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private ScenarioStepReturnBase RunScenarioStep<TScenario>(
+        private ScenarioStepReturnResultBundle RunScenarioStep<TScenario>(
             TScenario scenario,
             MethodInfo method,
             TimeSpan timeout,
             object[] previousParameters,
-            ABusinessStepScenarioAttribute businessStepScenario,
-            out ScenarioResult scenarioResult)
+            ABusinessStepScenarioAttribute businessStepScenario)
         {
-            scenarioResult = new EmptyScenarioResult(numberScenarioStepInvoked: 1);
             ScenarioStepReturnBase scenarioStepResult = null;
             try
             {
@@ -280,8 +295,8 @@ namespace Ark.StepRunner
             {
                 _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
                 {
-                    scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
-                    return new ScenarioStepReturnVoid();
+                    var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
+                    return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
                 }
             }
 
@@ -290,14 +305,14 @@ namespace Ark.StepRunner
                 _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
 
                 {
-                    scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
-                    return new ScenarioStepReturnVoid();
+                    var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
+                    return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
                 }
             }
 
             _stepPublisherLogger.Log(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
 
-            return scenarioStepResult;
+            return new ScenarioStepReturnResultBundle(scenarioStepResult, new EmptyScenarioResult(numberScenarioStepInvoked: 1));
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -318,7 +333,7 @@ namespace Ark.StepRunner
                 var setupAttribute = method.GetCustomAttribute(typeof(AStepSetupScenarioAttribute)) as AStepSetupScenarioAttribute;
                 if (setupAttribute != null)
                 {
-                    _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute,scenarioStepTimeoutAttribute:timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
                     continue;
                 }
 
