@@ -230,14 +230,22 @@ namespace Ark.StepRunner
             {
                 var method = orderedMethods[index].Value.MethodInfo;
                 var timeout = orderedMethods[index].Value.Timeout;
+                var isParallel = orderedMethods[index].Value.ScenarioStepParallelAttribute != null;
 
                 numberInvokedSteps++;
                 ScenarioResult scenarioResultCurrent;
-                var scenarioStepResultBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
+                var taskScenarioStepBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
 
-                scenarioResult += scenarioStepResultBundle.ScenarioResult;
+                if (isParallel == true)
+                {
+                    continue;
+                }
 
-                if (scenarioStepResultBundle.ScenarioResult.IsSuccessful == false)
+                var resultBundle = taskScenarioStepBundle.Result;
+
+                scenarioResult += resultBundle.ScenarioResult;
+
+                if (resultBundle.ScenarioResult.IsSuccessful == false)
                 {
                     if (orderedMethods[index].Value.ExceptionIgnoreAttribute == null)
                     {
@@ -247,9 +255,9 @@ namespace Ark.StepRunner
                     scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
                 }
 
-                previousParameters = scenarioStepResultBundle.ScenarioSStepReturn.Parameters;
+                previousParameters = resultBundle.ScenarioSStepReturn.Parameters;
 
-                var scenarioStepJumpToStep = scenarioStepResultBundle.ScenarioSStepReturn as ScenarioStepJumpToStep;
+                var scenarioStepJumpToStep = resultBundle.ScenarioSStepReturn as ScenarioStepJumpToStep;
 
                 if (scenarioStepJumpToStep != null)
                 {
@@ -274,7 +282,7 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private ScenarioStepReturnResultBundle RunScenarioStep<TScenario>(
+        private async Task<ScenarioStepReturnResultBundle> RunScenarioStep<TScenario>(
             TScenario scenario,
             MethodInfo method,
             TimeSpan timeout,
@@ -285,11 +293,10 @@ namespace Ark.StepRunner
             try
             {
                 _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", businessStepScenario.Description));
-                scenarioStepResult = _methodInvoker.MethodInvoke<TScenario>(
-                    scenario,
-                    method,
-                    timeout,
-                    previousParameters);
+                await Task.Run(() =>
+                {
+                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout,previousParameters);
+                });
             }
             catch (AScenarioStepTimeoutException timeoutException)
             {
