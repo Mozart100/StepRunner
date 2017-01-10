@@ -3,6 +3,7 @@ using Ark.StepRunner.UnitTests.ScenarioMocks;
 using Ark.StepRunner.Exceptions;
 using Ark.StepRunner.TraceLogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Concurrent;
 using Moq;
 
 namespace Ark.StepRunner.UnitTests
@@ -455,7 +456,7 @@ namespace Ark.StepRunner.UnitTests
         {
             const int numberScenarioStepInvoked = 9;
             //--------------------------------------------------------------------------------------------------------------------------------------
-            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
@@ -468,45 +469,26 @@ namespace Ark.StepRunner.UnitTests
             //Setups
             var list = queue.ToList();
             var dictionary = new HashSet<int>();
-            //for (int i = 0; i < 3; i++)
-                for (int i = 8; i > 0; i--)
-                {
-                try
-                {
+            for (int i = 8; i > 0; i--)
+            {
+                
                     Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
-                }
-                catch (Exception)
-                {
-                    int x = 0;
-                    throw;
-                }
+                
+                
             }
             //return;
             //cleaup
             for (int i = 6; i < 9; i++)
             {
-                try
+
+                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+                if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
                 {
-                    Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
-                    if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
-                    {
-                        throw new Exception("Should be between 6 and 9.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    int x = 0; Console.WriteLine("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                    throw new Exception("Should be between 6 and 9.");
                 }
 
-                try
-                {
-                    Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-                }
-                catch
-                {
-                    int x = 0;
-                    Console.WriteLine("11111111111111111111111111");
-                }
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+
             }
 
             //Business
@@ -518,15 +500,9 @@ namespace Ark.StepRunner.UnitTests
                     throw new Exception("Should be between 3 and 6.");
                 }
 
-                try
-                {
+                
                     Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-                }
-                catch
-                {
-                    int x = 0;
-                    Console.WriteLine("2222222222222222222222222222");
-                }
+                
             }
 
             //Setup.
@@ -537,15 +513,9 @@ namespace Ark.StepRunner.UnitTests
                     throw new Exception("Should be less then 3");
                 }
 
-                try
-                {
+               
                     Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-                }
-                catch
-                {
-                    int x = 0;
-                    Console.WriteLine("333333333333333333333333333");
-                }
+               
             }
 
             //var attribute = queue.Dequeue();
@@ -588,17 +558,20 @@ namespace Ark.StepRunner.UnitTests
 
     internal class TestLogger : IStepPublisherLogger
     {
-        private readonly Queue<string> _queue;
+        private readonly ConcurrentQueue<string> _queue;
+        private object _locker;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         public TestLogger()
         {
-            _queue = new Queue<string>();
+
+            _queue = new ConcurrentQueue<string>();
+            _locker = new object();
         }
 
-        public Queue<string> Queue => _queue;
+        public ConcurrentQueue<string> Queue => _queue;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------

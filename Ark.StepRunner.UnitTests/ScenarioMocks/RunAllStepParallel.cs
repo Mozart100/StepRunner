@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System;
+using System.Diagnostics;
 
 
 namespace Ark.StepRunner.UnitTests.ScenarioMocks
@@ -18,8 +19,8 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
             SetupStep1,
             SetupStep2,
             SetupStep3,
-            SetupStep4,
-            SetupStep5,
+            //SetupStep4,
+            //SetupStep5,
             BusinessStep1,
             BusinessStep2,
             BusinessStep3,
@@ -30,6 +31,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         }
 
         private readonly StepTrack<ABusinessStepScenarioAttribute> _stepTracker;
+        private Stopwatch _stopWatch;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -37,6 +39,8 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         public RunAllStepParallel(StepTrack<ABusinessStepScenarioAttribute> stepTracker)
         {
             _stepTracker = stepTracker;
+            _stopWatch = new Stopwatch();
+            _stopWatch.Start();
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -48,10 +52,16 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime,attribute.Index );
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -62,10 +72,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -77,10 +92,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
 
         }
 
@@ -91,10 +111,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //     {
         //         var method = MethodBase.GetCurrentMethod();
         //         var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-        //         Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+        //var elapse = _stopWatch.Elapsed;
+        //var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+        //Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
 
         //         _stepTracker.Enqueue(attribute);
         //         Thread.Sleep(TimeSpan.FromSeconds(1));
+        //elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+        //    Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]",elapsedTime, attribute.Index);
+
 
         //     }
         //[AScenarioStepTimeout(seconds: 20)]
@@ -104,10 +129,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //     {
         //         var method = MethodBase.GetCurrentMethod();
         //         var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-        //         Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+        //var elapse = _stopWatch.Elapsed;
+        //var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+        //Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
         //         _stepTracker.Enqueue(attribute);
         //         Thread.Sleep(TimeSpan.FromSeconds(1));
+        //elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+        //    Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]",elapsedTime, attribute.Index);
 
         //     }
 
@@ -123,10 +153,16 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -138,10 +174,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -154,10 +195,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(2));
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -165,17 +211,21 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallelAttribute]
-        [AStepCleanupScenario(index: (int)StepsForScenario.Cleanup1, description: "RunScenario  15 Method")]
+        [AStepCleanupScenario(index: (int)StepsForScenario.Cleanup1, description: "Cleanup")]
         public void Cleanup1()
         {
 
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+
+            var elapse = _stopWatch.Elapsed;
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", _stopWatch.Elapsed, attribute.Index);
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds,elapse.Milliseconds / 10);
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            Console.WriteLine("Finish attribute.Index = [{0}]", attribute.Index);
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -187,11 +237,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            Console.WriteLine("Finish attribute.Index = [{0}]", attribute.Index);
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]",elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -202,11 +256,15 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         {
             var method = MethodBase.GetCurrentMethod();
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
-            Console.WriteLine("Start attribute.Index = [{0}]", attribute.Index);
+            var elapse = _stopWatch.Elapsed;
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine("time [{0}] | Start attribute.Index = [{1}]", elapsedTime, attribute.Index);
+
 
             _stepTracker.Enqueue(attribute);
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            Console.WriteLine("Finish attribute.Index = [{0}]", attribute.Index);
+            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", elapse.Hours, elapse.Minutes, elapse.Seconds, elapse.Milliseconds / 10);
+            Console.WriteLine(" Finish Time [{0}] attribute.Index = [{1}]", elapsedTime, attribute.Index);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------

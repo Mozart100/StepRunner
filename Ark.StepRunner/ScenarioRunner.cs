@@ -226,7 +226,7 @@ namespace Ark.StepRunner
 
             var orderedMethods = steps.OrderBy(x => x.Key).ToList();
 
-            for (int index = 0; index < orderedMethods.Count;)
+            for (var index = 0; index < orderedMethods.Count;)
             {
                 var method = orderedMethods[index].Value.MethodInfo;
                 var timeout = orderedMethods[index].Value.Timeout;
@@ -279,8 +279,8 @@ namespace Ark.StepRunner
             }
 
             Task[] pureTasks = tasks.Select(x => x.Item2).ToArray();
-           Task.WaitAll(pureTasks);
-            foreach (var task in  tasks)
+            Task.WaitAll(pureTasks);
+            foreach (var task in tasks)
             {
                 scenarioResult += task.Item2.Result.ScenarioResult;
 
@@ -314,8 +314,9 @@ namespace Ark.StepRunner
                 //await Task.Yield();
                 await Task.Run(() =>
                 {
-                
-                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
+                    var invoker = new MethodInvoker();
+                    scenarioStepResult = invoker.MethodInvoke(scenario, method, timeout, previousParameters);
+                    //scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
                 });
             }
             catch (AScenarioStepTimeoutException timeoutException)
