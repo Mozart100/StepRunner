@@ -222,7 +222,7 @@ namespace Ark.StepRunner
             ScenarioResult scenarioResult = new EmptyScenarioResult();
             var numberInvokedSteps = 0;
             object[] previousParameters = null;
-
+            var tasks = new List<Tuple<int, Task<ScenarioStepReturnResultBundle>>>();
 
             var orderedMethods = steps.OrderBy(x => x.Key).ToList();
 
@@ -238,6 +238,7 @@ namespace Ark.StepRunner
 
                 if (isParallel == true)
                 {
+                    tasks.Add(new Tuple<int, Task<ScenarioStepReturnResultBundle>>(index++, taskScenarioStepBundle));
                     continue;
                 }
 
@@ -277,6 +278,23 @@ namespace Ark.StepRunner
                 }
             }
 
+            Task[] pureTasks = tasks.Select(x => x.Item2).ToArray();
+           Task.WaitAll(pureTasks);
+            foreach (var task in  tasks)
+            {
+                scenarioResult += task.Item2.Result.ScenarioResult;
+
+                if (task.Item2.Result.ScenarioResult.IsSuccessful == false)
+                {
+                    if (orderedMethods[task.Item1].Value.ExceptionIgnoreAttribute == null)
+                    {
+                        return scenarioResult;
+                    }
+
+                    scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
+                }
+            }
+
             return scenarioResult;
         }
 
@@ -293,9 +311,11 @@ namespace Ark.StepRunner
             try
             {
                 _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", businessStepScenario.Description));
+                //await Task.Yield();
                 await Task.Run(() =>
                 {
-                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout,previousParameters);
+                
+                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
                 });
             }
             catch (AScenarioStepTimeoutException timeoutException)
