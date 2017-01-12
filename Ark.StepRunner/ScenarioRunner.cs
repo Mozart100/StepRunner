@@ -220,7 +220,6 @@ namespace Ark.StepRunner
             IDictionary<int, StepAndAttributeBundle> steps)
         {
             ScenarioResult scenarioResult = new EmptyScenarioResult();
-            var numberInvokedSteps = 0;
             object[] previousParameters = null;
             var tasks = new List<Tuple<int, Task<ScenarioStepReturnResultBundle>>>();
 
@@ -232,7 +231,6 @@ namespace Ark.StepRunner
                 var timeout = orderedMethods[index].Value.Timeout;
                 var isParallel = orderedMethods[index].Value.ScenarioStepParallelAttribute != null;
 
-                numberInvokedSteps++;
                 ScenarioResult scenarioResultCurrent;
                 var taskScenarioStepBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
 
