@@ -278,7 +278,7 @@ namespace Ark.StepRunner
                 }
             }
 
-            Task[] pureTasks = tasks.Select(x => x.Item2).ToArray();
+            var pureTasks = tasks.Select(x => x.Item2).ToArray();
             Task.WaitAll(pureTasks);
             foreach (var task in tasks)
             {
@@ -427,7 +427,6 @@ namespace Ark.StepRunner
                 {
                     var task = Invoke<TScenario>(scenario, methodInfo, parameters);
 
-
                     if (timeout != TimeSpan.Zero && task.Wait(timeout: timeout) == false)
                     {
                         try
@@ -463,7 +462,6 @@ namespace Ark.StepRunner
 
                 var task = Task.Run(() =>
                 {
-                    //methodResult = methodInfo.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
                     try
                     {
                         methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
@@ -472,7 +470,6 @@ namespace Ark.StepRunner
                     {
                         throw exception.InnerException;
                     }
-                    //_manuelResetEvent.Set();
                 });
 
                 await task;

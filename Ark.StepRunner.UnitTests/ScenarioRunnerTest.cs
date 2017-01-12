@@ -446,8 +446,6 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutAttributeMissinigException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
-
-
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -471,10 +469,10 @@ namespace Ark.StepRunner.UnitTests
             var dictionary = new HashSet<int>();
             for (int i = 8; i > 0; i--)
             {
-                
-                    Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
-                
-                
+
+                Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
+
+
             }
             //return;
             //cleaup
@@ -500,9 +498,9 @@ namespace Ark.StepRunner.UnitTests
                     throw new Exception("Should be between 3 and 6.");
                 }
 
-                
-                    Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-                
+
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+
             }
 
             //Setup.
@@ -513,44 +511,82 @@ namespace Ark.StepRunner.UnitTests
                     throw new Exception("Should be less then 3");
                 }
 
-               
-                    Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-               
+
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
             }
 
-            //var attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.SetupStep1);
 
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.SetupStep2);
+        }
 
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.SetupStep3);
+        //--------------------------------------------------------------------------------------------------------------------------------------
 
-            ////--------------------------------------------------------------------------------------------------------------------------------------
-            ////BusinessSteps
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.BusinessStep1);
-
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.BusinessStep2);
-
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.BusinessStep3);
-
-
-
+        [Ignore]
+        [TestMethod]
+        public void ScenarioRunner_ParallelTimeout_ThrowTimeoutExceptionAndGoToCleanups()
+        {
+            const int numberScenarioStepInvoked = 9;
             //--------------------------------------------------------------------------------------------------------------------------------------
-            //Cleanups
+            //Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.Cleanup1);
+            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.Cleanup2);
+            var result = scenarioRunner.RunScenario<RunAllStepParallel>(queue);
 
-            //attribute = queue.Dequeue();
-            //Assert.IsTrue(attribute.Index == (int)RunAllStepParallel.StepsForScenario.Cleanup3);
+            var index = 0;
+            //Assert.IsTrue(result.IsSuccessful,(++index).ToString());
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+
+            //Setups
+            var list = queue.ToList();
+            var dictionary = new HashSet<int>();
+            for (int i = 8; i > 0; i--)
+            {
+
+                Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
+
+
+            }
+            //return;
+            //cleaup
+            for (int i = 6; i < 9; i++)
+            {
+
+                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+                if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
+                {
+                    throw new Exception("Should be between 6 and 9.");
+                }
+
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+            }
+
+            //Business
+            for (int i = 6; i < 3; i--)
+            {
+                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+                if ((list.ElementAt(i).Index < 3) || (list.ElementAt(i).Index > 6))
+                {
+                    throw new Exception("Should be between 3 and 6.");
+                }
+
+
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+
+            }
+
+            //Setup.
+            for (int i = 0; i < 3; i++)
+            {
+                if (list.ElementAt(i).Index > 3)
+                {
+                    throw new Exception("Should be less then 3");
+                }
+
+
+                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+            }
+
 
         }
     }
@@ -566,7 +602,6 @@ namespace Ark.StepRunner.UnitTests
 
         public TestLogger()
         {
-
             _queue = new ConcurrentQueue<string>();
             _locker = new object();
         }
