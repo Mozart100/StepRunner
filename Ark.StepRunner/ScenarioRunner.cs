@@ -314,9 +314,7 @@ namespace Ark.StepRunner
                 //await Task.Yield();
                 await Task.Run(() =>
                 {
-                    var invoker = new MethodInvoker();
-                    scenarioStepResult = invoker.MethodInvoke(scenario, method, timeout, previousParameters);
-                    //scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
+                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
                 });
             }
             catch (AScenarioStepTimeoutException timeoutException)
@@ -406,14 +404,11 @@ namespace Ark.StepRunner
 
         private class MethodInvoker
         {
-            private readonly ManualResetEvent _manuelResetEvent;
-
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             public MethodInvoker()
             {
-                _manuelResetEvent = new ManualResetEvent(initialState: false);
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -426,17 +421,6 @@ namespace Ark.StepRunner
                 params object[] parameters)
             {
 
-                if (timeout == TimeSpan.Zero)
-                {
-                    _manuelResetEvent.Set();
-                }
-                else
-                {
-                    _manuelResetEvent.Reset();
-                }
-
-
-
                 ScenarioStepReturnBase result = null;
 
                 try
@@ -444,7 +428,7 @@ namespace Ark.StepRunner
                     var task = Invoke<TScenario>(scenario, methodInfo, parameters);
 
 
-                    if (_manuelResetEvent.WaitOne(timeout: timeout) == false)
+                    if (timeout != TimeSpan.Zero && task.Wait(timeout: timeout) == false)
                     {
                         try
                         {
@@ -488,7 +472,7 @@ namespace Ark.StepRunner
                     {
                         throw exception.InnerException;
                     }
-                    _manuelResetEvent.Set();
+                    //_manuelResetEvent.Set();
                 });
 
                 await task;
