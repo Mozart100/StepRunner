@@ -83,7 +83,7 @@ namespace Ark.StepRunner
 
             var result = new ScenarioResult(
                 isSuccessful: scenarioResult1.IsSuccessful | scenarioResult2.IsSuccessful,
-                numberScenarioStepInvoked: scenarioResult1.NumberScenarioStepInvoked + scenarioResult2.NumberScenarioStepInvoked,
+                numberScenarioStepInvoked:Math.Max(scenarioResult1.NumberScenarioStepInvoked, scenarioResult2.NumberScenarioStepInvoked),
                 exceptions: exceptions.ToArray());
 
 

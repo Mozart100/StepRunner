@@ -520,36 +520,29 @@ namespace Ark.StepRunner.UnitTests
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [Ignore]
         [TestMethod]
         public void ScenarioRunner_ParallelTimeout_ThrowTimeoutExceptionAndGoToCleanups()
         {
-            const int numberScenarioStepInvoked = 9;
+            var tmp = 5 | 6;
+            const int numberScenarioStepInvoked = 6;
+
             //--------------------------------------------------------------------------------------------------------------------------------------
-            //Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<RunAllStepParallel>(queue);
+            var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>(queue);
 
-            var index = 0;
-            //Assert.IsTrue(result.IsSuccessful,(++index).ToString());
+            Assert.IsFalse(result.IsSuccessful);
+            Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-
+            
             //Setups
             var list = queue.ToList();
             var dictionary = new HashSet<int>();
-            for (int i = 8; i > 0; i--)
-            {
 
-                Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
-
-
-            }
-            //return;
             //cleaup
-            for (int i = 6; i < 9; i++)
+            for (int i = 3; i < 5; i++)
             {
 
                 Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
@@ -559,20 +552,6 @@ namespace Ark.StepRunner.UnitTests
                 }
 
                 Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-            }
-
-            //Business
-            for (int i = 6; i < 3; i--)
-            {
-                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
-                if ((list.ElementAt(i).Index < 3) || (list.ElementAt(i).Index > 6))
-                {
-                    throw new Exception("Should be between 3 and 6.");
-                }
-
-
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-
             }
 
             //Setup.

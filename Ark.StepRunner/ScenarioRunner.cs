@@ -288,7 +288,8 @@ namespace Ark.StepRunner
                 {
                     if (orderedMethods[task.Item1].Value.ExceptionIgnoreAttribute == null)
                     {
-                        return scenarioResult;
+                        //return scenarioResult;
+                        continue;
                     }
 
                     scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
