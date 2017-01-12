@@ -31,7 +31,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         }
 
         private readonly StepTrack<ABusinessStepScenarioAttribute> _stepTracker;
-        private Stopwatch _stopWatch;
+        private readonly Stopwatch _stopWatch;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
