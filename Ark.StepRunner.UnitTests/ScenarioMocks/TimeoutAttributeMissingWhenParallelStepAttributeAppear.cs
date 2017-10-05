@@ -7,7 +7,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     internal class TimeoutAttributeMissingWhenParallelStepAttributeAppear
     {
 
-        internal enum StepsForScenario
+        internal enum ScenarioSteps
         {
             SetupStep1,
             SetupStep2,
@@ -31,7 +31,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep1, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep1, description: "RunScenario Method")]
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -44,7 +44,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallelAttribute]
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep2, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep2, description: "RunScenario Method")]
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -57,7 +57,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         [AScenarioStepParallelAttribute]
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep3, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep3, description: "RunScenario Method")]
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -72,7 +72,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -85,7 +85,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -97,7 +97,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();

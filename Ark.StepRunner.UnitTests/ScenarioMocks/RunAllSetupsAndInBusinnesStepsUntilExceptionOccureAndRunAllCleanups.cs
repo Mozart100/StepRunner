@@ -7,7 +7,7 @@
     internal class RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups
     {
 
-        internal enum StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups
+        internal enum ScenarioSteps
         {
             StepOrSetupOrCleanup1,
             StepOrSetupOrCleanup2,
@@ -28,7 +28,7 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup1, description: "RunScenario Method")]
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -40,7 +40,7 @@
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup2, description: "RunScenario Method")]
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -52,7 +52,7 @@
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup3, description: "RunScenario Method")]
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -67,7 +67,7 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -80,7 +80,7 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -93,7 +93,7 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -109,7 +109,7 @@
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup1, description: "RunScenario Method")]
         public void Cleanup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -121,7 +121,7 @@
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup2, description: "RunScenario Method")]
         public void Cleanup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -133,7 +133,7 @@
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.StepOrSetupOrCleanup3, description: "RunScenario Method")]
         public void Cleanup3()
         {
             var method = MethodBase.GetCurrentMethod();

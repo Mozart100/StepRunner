@@ -66,9 +66,9 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.StepsForRunAllStepsWithoutScenarioStepResult.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.StepsForRunAllStepsWithoutScenarioStepResult.Step2);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.StepsForRunAllStepsWithoutScenarioStepResult.Step3);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.ScenarioSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithoutScenarioStepResult.ScenarioSteps.Step3);
 
         }
 
@@ -88,8 +88,8 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step3);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.ScenarioSteps.Step3);
 
         }
 
@@ -109,10 +109,10 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step3);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step4);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step4);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -133,8 +133,8 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -156,8 +156,8 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is NullReferenceException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
         }
 
 
@@ -195,8 +195,8 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.StepsForRunAllStepsWithtScenarioStepJumpToNextStep.Step3);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsWithtScenarioStepJumpToNextStep.ScenarioSteps.Step3);
             Assert.IsTrue(testLogger.Queue.ToArray().Length > 1);
 
         }
@@ -220,22 +220,22 @@ namespace Ark.StepRunner.UnitTests
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
             var attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.SetupStep1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.SetupStep1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.SetupStep2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.SetupStep2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.SetupStep3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.SetupStep3);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.BusinessStep1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.BusinessStep1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.BusinessStep2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.BusinessStep2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.StepsForRunAllSetupsAndBusinnesSteps.BusinessStep3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesSteps.ScenarioSteps.BusinessStep3);
 
 
         }
@@ -258,31 +258,31 @@ namespace Ark.StepRunner.UnitTests
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
             var attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Setup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Setup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Setup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Setup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Setup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Setup3);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.BusinessStep1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.BusinessStep1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.BusinessStep2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.BusinessStep2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.BusinessStep3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.BusinessStep3);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Cleanup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Cleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Cleanup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Cleanup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.StepsForRunAllSetupsAndBusinnesStepsAndCleanups.Cleanup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndBusinnesStepsAndCleanups.ScenarioSteps.Cleanup3);
 
 
         }
@@ -306,33 +306,33 @@ namespace Ark.StepRunner.UnitTests
 
             //Setups
             var attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup3);
 
             //--------------------------------------------------------------------------------------------------------------------------------------
             //BusinessSteps
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup2);
 
             //--------------------------------------------------------------------------------------------------------------------------------------
             //Cleanups
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepsForRunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.StepOrSetupOrCleanup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups.ScenarioSteps.StepOrSetupOrCleanup3);
 
 
         }
@@ -356,10 +356,10 @@ namespace Ark.StepRunner.UnitTests
 
             //Setups
             var attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup1);
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.ScenarioSteps.Setup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup2);
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.ScenarioSteps.Setup2);
 
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -367,13 +367,13 @@ namespace Ark.StepRunner.UnitTests
             //Cleanups
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup1);
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.ScenarioSteps.Cleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup2);
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.ScenarioSteps.Cleanup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup3);
+            Assert.IsTrue(attribute.Index == (int)ThrowExceptionInSetupsAndJumpToRunAllCleanups.ScenarioSteps.Cleanup3);
 
 
         }
@@ -396,31 +396,31 @@ namespace Ark.StepRunner.UnitTests
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
             var attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Setup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Setup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Setup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Setup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Setup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Setup3);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.BusinessStep1);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.BusinessStep1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.BusinessStep2);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.BusinessStep2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.BusinessStep3);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.BusinessStep3);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Cleanup1);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Cleanup1);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Cleanup2);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Cleanup2);
 
             attribute = queue.Dequeue();
-            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.StepsForRunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.Cleanup3);
+            Assert.IsTrue(attribute.Index == (int)RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException.ScenarioSteps.Cleanup3);
 
 
         }

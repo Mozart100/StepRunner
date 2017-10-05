@@ -12,7 +12,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     internal class RunStepsAndFaileDueToTimeout 
     {
 
-        internal enum StepsForRunAllStepsAndFaileDueToTimeout
+        internal enum ScenarioSteps
         {
             Step1,
             Step2,
@@ -37,7 +37,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
             
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -51,7 +51,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         [AScenarioStepTimeout(seconds: 1)]
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -65,7 +65,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndFaileDueToTimeout.Step3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();

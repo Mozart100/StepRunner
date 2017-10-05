@@ -7,7 +7,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     internal class ThrowExceptionInSetupsAndJumpToRunAllCleanups
     {
 
-        internal enum StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups
+        internal enum ScenarioSteps
         {
             Setup1,
             Setup2,
@@ -34,7 +34,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup1, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.Setup1, description: "RunScenario Method")]
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -46,7 +46,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup2, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.Setup2, description: "RunScenario Method")]
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -60,7 +60,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepSetupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Setup3, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.Setup3, description: "RunScenario Method")]
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -75,7 +75,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.BusinessStep1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep1, description: "RunScenario Method")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -88,7 +88,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.BusinessStep2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep2, description: "RunScenario 5 Method")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -100,7 +100,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [ABusinessStepScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.BusinessStep3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep3, description: "RunScenario  15 Method")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -116,7 +116,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup1, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup1, description: "RunScenario Method")]
         public void Cleanup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -128,7 +128,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup2, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup2, description: "RunScenario Method")]
         public void Cleanup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -140,7 +140,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [AStepCleanupScenario(index: (int)StepsForThrowExceptionInSetupsAndJumpToRunAllCleanups.Cleanup3, description: "RunScenario Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup3, description: "RunScenario Method")]
         public void Cleanup3()
         {
             var method = MethodBase.GetCurrentMethod();

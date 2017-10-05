@@ -9,7 +9,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     internal class RunAllStepsAndPassingParametersBetweenSteps
     {
 
-        internal enum StepsForRunAllStepsAndPassingParametersBetweenSteps
+        internal enum ScenarioSteps
         {
             Step1,
             Step2,
@@ -45,7 +45,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndPassingParametersBetweenSteps.Step1, description: "RunScenario Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step1, description: "RunScenario Method")]
         public ScenarioStepReturnNextStep RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -60,7 +60,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndPassingParametersBetweenSteps.Step2, description: "RunScenario 5 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step2, description: "RunScenario 5 Method")]
         public void RunMethod2(int magicNumForStep2,string magicStringForStep2)
         {
             var method = MethodBase.GetCurrentMethod();
@@ -77,7 +77,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
 
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndPassingParametersBetweenSteps.Step3, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step3, description: "RunScenario  15 Method")]
         public ScenarioStepReturnNextStep RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -90,7 +90,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [ABusinessStepScenario(index: (int)StepsForRunAllStepsAndPassingParametersBetweenSteps.Step4, description: "RunScenario  15 Method")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.Step4, description: "RunScenario  15 Method")]
         public void RunMethod4(int magicNumForStep4, string magicStringForStep4)
         {
             var method = MethodBase.GetCurrentMethod();

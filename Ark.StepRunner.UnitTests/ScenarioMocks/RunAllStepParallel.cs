@@ -46,7 +46,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
         [AScenarioStepTimeout(seconds: 20)]
-        [AScenarioStepParallelAttribute]
+        [AScenarioStepParallel]
         [AStepSetupScenario(index: (int)StepsForScenario.SetupStep1, description: "RunScenario Method")]
         public void Setup1()
         {

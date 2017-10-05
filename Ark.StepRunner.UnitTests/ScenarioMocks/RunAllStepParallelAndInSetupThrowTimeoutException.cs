@@ -10,7 +10,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     internal class RunAllStepParallelAndInSetupThrowTimeoutException
     {
 
-        internal enum StepsForScenario
+        internal enum ScenarioSteps
         {
             SetupStep1,
             SetupStep2,
@@ -47,7 +47,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep1, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep1, description: "RunScenario Method")]
         public void Setup1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -67,7 +67,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         [AScenarioStepTimeout(seconds: 1)]
         [AScenarioStepParallel]
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep2, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep2, description: "RunScenario Method")]
         public void Setup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -87,7 +87,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [AStepSetupScenario(index: (int)StepsForScenario.SetupStep3, description: "RunScenario Method")]
+        [AStepSetupScenario(index: (int)ScenarioSteps.SetupStep3, description: "RunScenario Method")]
         public void Setup3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -148,7 +148,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep1, description: "RunMethod1")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep1, description: "RunMethod1")]
         public void RunMethod1()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -169,7 +169,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep2, description: "RunMethod2")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep2, description: "RunMethod2")]
         public void RunMethod2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -190,7 +190,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [ABusinessStepScenario(index: (int)StepsForScenario.BusinessStep3, description: "RunMethod3")]
+        [ABusinessStepScenario(index: (int)ScenarioSteps.BusinessStep3, description: "RunMethod3")]
         public void RunMethod3()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -211,7 +211,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [AStepCleanupScenario(index: (int)StepsForScenario.Cleanup1, description: "Cleanup")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup1, description: "Cleanup")]
         public void Cleanup1()
         {
 
@@ -232,7 +232,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
 
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [AStepCleanupScenario(index: (int)StepsForScenario.Cleanup2, description: "RunScenario  15 Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup2, description: "RunScenario  15 Method")]
         public void Cleanup2()
         {
             var method = MethodBase.GetCurrentMethod();
@@ -251,7 +251,7 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
         //--------------------------------------------------------------------------------------------------------------------------------------
         [AScenarioStepTimeout(seconds: 20)]
         [AScenarioStepParallel]
-        [AStepCleanupScenario(index: (int)StepsForScenario.Cleanup3, description: "RunScenario  15 Method")]
+        [AStepCleanupScenario(index: (int)ScenarioSteps.Cleanup3, description: "RunScenario  15 Method")]
         public void Cleanup3()
         {
             var method = MethodBase.GetCurrentMethod();
