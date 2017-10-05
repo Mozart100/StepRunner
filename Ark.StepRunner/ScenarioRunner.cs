@@ -9,6 +9,7 @@ using Ark.StepRunner.Exceptions;
 using Ark.StepRunner.ScenarioStepResult;
 using System.Threading;
 using Ark.StepRunner.TraceLogger;
+using Autofac;
 
 namespace Ark.StepRunner
 {
@@ -23,6 +24,8 @@ namespace Ark.StepRunner
 
             }
         }
+
+        public IContainer _containerBuilder;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -164,36 +167,43 @@ namespace Ark.StepRunner
             _scenarioCleanups = new Dictionary<int, StepAndAttributeBundle>();
         }
 
+        public ScenarioRunner(IStepPublisherLogger stepPublisherLogger, IContainer containerBuilder)
+        {
+            _containerBuilder = containerBuilder;
+            _stepPublisherLogger = stepPublisherLogger;
+            _methodInvoker = new MethodInvoker();
+
+            _scenarioSteps = new Dictionary<int, StepAndAttributeBundle>();
+            _scenarioSetups = new Dictionary<int, StepAndAttributeBundle>();
+            _scenarioCleanups = new Dictionary<int, StepAndAttributeBundle>();
+        }
+
+
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioResult RunScenario<TScenario>(params object[] parameters)
+       
+        public ScenarioResult RunScenario<TScenario>()
         {
             try
             {
-                AssembleMethDataForScenario<TScenario>();
+                AssembleMetaDataForScenario<TScenario>();
             }
             catch (Exception exception)
             {
                 return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exceptions: exception);
             }
 
+            var scenario = _containerBuilder.Resolve<TScenario>();
+            //var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
 
-            var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
-
-            var notNullList = NotNullLocator(scenario, parameters).ToList();
-
-            if (notNullList.Any())
-            {
-                return new ScenarioResult(isSuccessful: false,
-                    numberScenarioStepInvoked: 0,
-                    exceptions: notNullList.First());
-            }
 
 
             var result = RunScenario(scenario);
             return result;
         }
+
+
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -342,7 +352,7 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private void AssembleMethDataForScenario<TScenario>()
+        private void AssembleMetaDataForScenario<TScenario>()
         {
             if (Attribute.IsDefined(typeof(TScenario), typeof(AScenarioAttribute)) == false)
             {
@@ -374,25 +384,6 @@ namespace Ark.StepRunner
                 {
                     _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
                 }
-            }
-        }
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
-
-        private IEnumerable<AScenarioConstructorParameterNullException> NotNullLocator<TScenario>(TScenario scenario, params object[] parameters)
-        {
-            var index = 0;
-            foreach (var parameter in typeof(TScenario).GetConstructors().First().GetParameters())
-            {
-                bool hasNotNullAttribute = parameter.CustomAttributes.Any(x => x.AttributeType == typeof(NotNullAttribute));
-                if (hasNotNullAttribute == true)
-                {
-                    if (parameters[index] == null)
-                    {
-                        yield return new AScenarioConstructorParameterNullException(parameterName: parameter.Name);
-                    }
-                }
-                index++;
             }
         }
 

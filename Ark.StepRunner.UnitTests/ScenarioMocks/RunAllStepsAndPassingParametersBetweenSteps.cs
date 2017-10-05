@@ -8,6 +8,12 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
     [AScenario(description: "test scenario")]
     internal class RunAllStepsAndPassingParametersBetweenSteps
     {
+        internal class ExpectedData
+
+        {
+
+        }
+
 
         internal enum ScenarioSteps
         {

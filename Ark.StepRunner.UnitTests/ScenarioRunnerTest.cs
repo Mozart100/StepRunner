@@ -11,13 +11,14 @@ namespace Ark.StepRunner.UnitTests
     using System.Collections.Generic;
     using System.Linq;
     using Ark.StepRunner.CustomAttribute;
-
+    using Autofac;
 
     [TestClass]
     public class ScenarioRunnerTest
     {
 
         private Mock<IStepPublisherLogger> _publisherLogger;
+        private ContainerBuilder _containerBuilder;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +27,9 @@ namespace Ark.StepRunner.UnitTests
         public void TestInitialize()
         {
             _publisherLogger = new Mock<IStepPublisherLogger>();
+            _containerBuilder = new ContainerBuilder();
+
+
         }
 
 
@@ -60,9 +64,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<RunAllStepsWithoutScenarioStepResult>(queue);
+            _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+            _containerBuilder.RegisterType<RunAllStepsWithoutScenarioStepResult>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var result = scenarioRunner.RunScenario<RunAllStepsWithoutScenarioStepResult>();
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
@@ -82,9 +92,16 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>(queue);
+            _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+            _containerBuilder.RegisterType<RunAllStepsWithtScenarioStepJumpToNextStep>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>();
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
@@ -95,25 +112,32 @@ namespace Ark.StepRunner.UnitTests
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [TestMethod]
-        public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenSteps()
-        {
-            const int numberScenarioStepInvoked = 4;
+        //[TestMethod]
+        //public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenSteps()
+        //{
+        //    const int numberScenarioStepInvoked = 4;
 
-            //--------------------------------------------------------------------------------------------------------------------------------------
+        //    //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+        //    var queue = new StepTrack<int>();
 
-            var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(queue, 1, "111", 2, "222");
+        //    _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+        //    _containerBuilder.RegisterType<RunAllStepsAndPassingParametersBetweenSteps>();
 
-            Assert.IsTrue(result.IsSuccessful);
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step4);
-        }
+
+        //    IContainer container = _containerBuilder.Build();
+
+        //    var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+        //    var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(1, "111", 2, "222");
+
+        //    Assert.IsTrue(result.IsSuccessful);
+        //    Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step4);
+        //}
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -126,9 +150,16 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<RunStepsAndFaileDueToTimeout>(queue);
+            _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+            _containerBuilder.RegisterType<RunStepsAndFaileDueToTimeout>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunStepsAndFaileDueToTimeout>();
 
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
@@ -139,44 +170,27 @@ namespace Ark.StepRunner.UnitTests
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        [TestMethod]
-        public void ScenarioRunner_StopRunningWhenExceptionOccure()
-        {
-            const int numberScenarioStepInvoked = 2;
+        //[TestMethod]
+        //public void ScenarioRunner_StopRunningWhenExceptionOccure()
+        //{
+        //    const int numberScenarioStepInvoked = 2;
 
-            //--------------------------------------------------------------------------------------------------------------------------------------
+        //    //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var expectedNullReferenceException = new NullReferenceException();
+        //    var expectedNullReferenceException = new NullReferenceException();
 
-            var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+        //    var queue = new StepTrack<int>();
+        //    var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<ScenarioStopRunningAfterException>(queue, expectedNullReferenceException);
+        //    var result = scenarioRunner.RunScenario<ScenarioStopRunningAfterException>(queue, expectedNullReferenceException);
 
-            Assert.IsFalse(result.IsSuccessful);
-            Assert.IsTrue(result.Exceptions.First() is NullReferenceException);
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
-        }
+        //    Assert.IsFalse(result.IsSuccessful);
+        //    Assert.IsTrue(result.Exceptions.First() is NullReferenceException);
+        //    Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+        //    Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+        //}
 
-
-        [TestMethod]
-        public void ScenarioRunner_ValidateNotNullAttribute_ReturnExceptionNotNull()
-        {
-            const int numberScenarioStepInvoked = 0;
-
-            //--------------------------------------------------------------------------------------------------------------------------------------
-
-            var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
-            string magicString = null;
-
-            var result = scenarioRunner.RunScenario<ScenarioWithNotNullAttributeInConstructor>(queue, magicString);
-            var exception = result.Exceptions.First() as AScenarioConstructorParameterNullException;
-            Assert.IsTrue(exception.ParameterName == "magicString");
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-        }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -188,9 +202,16 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<int>();
-            var scenarioRunner = new ScenarioRunner(testLogger);
 
-            var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>(queue);
+            _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+            _containerBuilder.RegisterType<RunAllStepsWithtScenarioStepJumpToNextStep>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(testLogger, container);
+
+            var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>();
 
 
             Assert.IsTrue(result.IsSuccessful);
@@ -211,9 +232,16 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
 
-            var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesSteps>(queue);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllSetupsAndBusinnesSteps>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesSteps>();
 
 
             Assert.IsTrue(result.IsSuccessful);
@@ -249,9 +277,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllSetupsAndBusinnesStepsAndCleanups>();
 
-            var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesStepsAndCleanups>(queue);
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesStepsAndCleanups>();
 
 
             Assert.IsTrue(result.IsSuccessful);
@@ -296,9 +330,14 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>();
 
-            var result = scenarioRunner.RunScenario<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>(queue);
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>();
 
 
             Assert.IsFalse(result.IsSuccessful);
@@ -346,9 +385,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<ThrowExceptionInSetupsAndJumpToRunAllCleanups>();
 
-            var result = scenarioRunner.RunScenario<ThrowExceptionInSetupsAndJumpToRunAllCleanups>(queue);
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<ThrowExceptionInSetupsAndJumpToRunAllCleanups>();
 
 
             Assert.IsFalse(result.IsSuccessful);
@@ -387,9 +432,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException>();
 
-            var result = scenarioRunner.RunScenario<RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException>(queue);
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException>();
 
 
             Assert.IsTrue(result.IsSuccessful);
@@ -437,9 +488,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
 
-            var result = scenarioRunner.RunScenario<TimeoutAttributeMissingWhenParallelStepAttributeAppear>(queue);
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
 
 
             Assert.IsFalse(result.IsSuccessful);
@@ -456,9 +513,15 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
             Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllStepParallel>();
 
-            var result = scenarioRunner.RunScenario<RunAllStepParallel>(queue);
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllStepParallel>();
 
             var index = 0;
             //Assert.IsTrue(result.IsSuccessful,(++index).ToString());
@@ -529,14 +592,19 @@ namespace Ark.StepRunner.UnitTests
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+            _containerBuilder.RegisterType<RunAllStepParallelAndInSetupThrowTimeoutException>();
 
-            var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>(queue);
+
+            IContainer container = _containerBuilder.Build();
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>();
 
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            
+
             //Setups
             var list = queue.ToList();
             var dictionary = new HashSet<int>();
