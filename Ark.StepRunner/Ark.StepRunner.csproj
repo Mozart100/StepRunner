@@ -51,7 +51,6 @@
     <Compile Include="CustomAttribute\AStepCleanupScenarioAttribute.cs" />
     <Compile Include="CustomAttribute\ABusinessStepScenarioAttribute.cs" />
     <Compile Include="CustomAttribute\AStepSetupScenarioAttribute.cs" />
-    <Compile Include="CustomAttribute\NotNullAttribute.cs" />
     <Compile Include="Exceptions\AScenarioConstructorParameterNullException.cs" />
     <Compile Include="Exceptions\AScenarioMissingAttributeException.cs" />
     <Compile Include="Exceptions\AScenarioStepTimeoutAttributeMissinigException.cs" />
