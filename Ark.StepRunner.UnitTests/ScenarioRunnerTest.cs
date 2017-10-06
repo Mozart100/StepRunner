@@ -39,7 +39,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_IsAScenarioAttributeDefine_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, _containerBuilder.Build());
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -49,7 +49,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_IsAStepScenarioAttribute_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object);
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, _containerBuilder.Build());
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -134,7 +134,6 @@ namespace Ark.StepRunner.UnitTests
             var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>();
-            //var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(1, "111", 2, "222");
 
 
             Assert.IsTrue(result.IsSuccessful);

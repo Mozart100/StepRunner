@@ -157,16 +157,6 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioRunner(IStepPublisherLogger stepPublisherLogger)
-        {
-            _stepPublisherLogger = stepPublisherLogger;
-            _methodInvoker = new MethodInvoker();
-
-            _scenarioSteps = new Dictionary<int, StepAndAttributeBundle>();
-            _scenarioSetups = new Dictionary<int, StepAndAttributeBundle>();
-            _scenarioCleanups = new Dictionary<int, StepAndAttributeBundle>();
-        }
-
         public ScenarioRunner(IStepPublisherLogger stepPublisherLogger, IContainer containerBuilder)
         {
             _containerBuilder = containerBuilder;
