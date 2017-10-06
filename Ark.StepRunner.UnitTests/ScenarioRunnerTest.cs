@@ -113,7 +113,7 @@ namespace Ark.StepRunner.UnitTests
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         [TestMethod]
-        public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenSteps()
+        public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenWithAutofacSteps()
         {
             const int numberScenarioStepInvoked = 4;
 
@@ -135,6 +135,36 @@ namespace Ark.StepRunner.UnitTests
 
             var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>();
             //var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>(1, "111", 2, "222");
+
+
+            Assert.IsTrue(result.IsSuccessful);
+            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step4);
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        [TestMethod]
+        public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenSteps()
+        {
+            const int numberScenarioStepInvoked = 4;
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            var queue = new StepTrack<int>();
+
+            _containerBuilder.Register(x => queue).As<StepTrack<int>>();
+            _containerBuilder.RegisterType<RunAllStepsAndPassingParametersBetweenSteps>();
+
+
+            IContainer container = _containerBuilder.Build();
+
+            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+
+            var result = scenarioRunner.RunScenarioWithParameters<RunAllStepsAndPassingParametersBetweenSteps>(1, "111", 2, "222");
 
 
             Assert.IsTrue(result.IsSuccessful);
@@ -203,7 +233,6 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
         }
-
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 

@@ -182,37 +182,51 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-       
-        public ScenarioResult RunScenarioWithParameters<TScenario>(params object  [] parameters)
+
+        public ScenarioResult RunScenarioWithParameters<TScenario>(params object[] parameters)
         {
-            try
-            {
-                AssembleMetaDataForScenario<TScenario>();
-            }
-            catch (Exception exception)
-            {
-                return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exceptions: exception);
-            }
 
             var autofacParams = new List<Autofac.NamedParameter>();
+            //var consPa5rams = typeof(TScenario).GetConstructors(BindingFlags.Public)[0].GetParameters();
+            var consPa5rams = typeof(TScenario)
+           .GetConstructors()
+           .FirstOrDefault(c => c.GetParameters().Length > 0);
 
-            foreach (var item in parameters)
+            int index = 0;
+            foreach (var item in consPa5rams.GetParameters())
             {
-                autofacParams.Add(new NamedParameter(nameof(item), item));
-            
+                if (item.GetType().IsClass == true)
+                {
+
+                    object tmp;
+                    if (_containerBuilder.TryResolve(item.ParameterType, out tmp) == false)
+                    {
+                        autofacParams.Add(new NamedParameter(item.Name, parameters[index++]));
+                    }
+                }
+                else
+                {
+                    autofacParams.Add(new NamedParameter(item.Name, parameters[index++]));
+                }
+
             }
 
-            var scenario = _containerBuilder.Resolve<TScenario>(autofacParams);
-            //var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
 
-
-
-            var result = RunScenario(scenario);
+            var result = RunScenarioStep<TScenario>(autofacParams.ToArray());
             return result;
         }
 
         public ScenarioResult RunScenario<TScenario>()
         {
+            var result = RunScenarioStep<TScenario>();
+            return result;
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------------------------------------------------------
+
+        private ScenarioResult RunScenarioStep<TScenario>(params NamedParameter[] parameters)
+        {
             try
             {
                 AssembleMetaDataForScenario<TScenario>();
@@ -222,18 +236,18 @@ namespace Ark.StepRunner
                 return new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 0, exceptions: exception);
             }
 
-            var scenario = _containerBuilder.Resolve<TScenario>();
-            //var scenario = (TScenario)Activator.CreateInstance(typeof(TScenario), parameters);
+            TScenario scenario;
 
+            if (parameters != null && parameters.Any() == true)
+                scenario = _containerBuilder.Resolve<TScenario>(parameters);
+            else
+                scenario = _containerBuilder.Resolve<TScenario>();
 
 
             var result = RunScenario(scenario);
             return result;
         }
 
-
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         private ScenarioResult RunScenario<TScenario>(TScenario scenario)
