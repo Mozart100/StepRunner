@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Ark.StepRunner.CustomAttribute;
 using Ark.StepRunner.Exceptions;
 using Ark.StepRunner.ScenarioStepResult;
-using System.Threading;
-using Ark.StepRunner.TraceLogger;
 using Autofac;
+using Serilog;
 
 namespace Ark.StepRunner
 {
@@ -25,9 +23,6 @@ namespace Ark.StepRunner
             }
         }
 
-        public IContainer _containerBuilder;
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
         private class StepAndAttributeBundle
@@ -142,7 +137,9 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private readonly IStepPublisherLogger _stepPublisherLogger;
+        //private readonly IStepPublisherLogger _stepPublisherLogger;
+        private ILogger _logger;
+        private readonly IContainer _containerBuilder;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -157,10 +154,10 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioRunner(IStepPublisherLogger stepPublisherLogger, IContainer containerBuilder)
+        public ScenarioRunner(ILogger  logger, IContainer containerBuilder)
         {
             _containerBuilder = containerBuilder;
-            _stepPublisherLogger = stepPublisherLogger;
+            _logger = logger;
             _methodInvoker = new MethodInvoker();
 
             _scenarioSteps = new Dictionary<int, StepAndAttributeBundle>();
@@ -351,7 +348,7 @@ namespace Ark.StepRunner
             ScenarioStepReturnBase scenarioStepResult = null;
             try
             {
-                _stepPublisherLogger.Log(string.Format("[{0}] Step was started.", businessStepScenario.Description));
+                _logger.Information(string.Format("[{0}] Step was started.", businessStepScenario.Description));
                 //await Task.Yield();
                 await Task.Run(() =>
                 {
@@ -360,7 +357,7 @@ namespace Ark.StepRunner
             }
             catch (AScenarioStepTimeoutException timeoutException)
             {
-                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
+                _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
                 {
                     var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
                     return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
@@ -369,7 +366,7 @@ namespace Ark.StepRunner
 
             catch (Exception exception)
             {
-                _stepPublisherLogger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
+                _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
 
                 {
                     var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
@@ -377,7 +374,7 @@ namespace Ark.StepRunner
                 }
             }
 
-            _stepPublisherLogger.Log(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
+            _logger.Information(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
 
             return new ScenarioStepReturnResultBundle(scenarioStepResult, new EmptyScenarioResult(numberScenarioStepInvoked: 1));
         }

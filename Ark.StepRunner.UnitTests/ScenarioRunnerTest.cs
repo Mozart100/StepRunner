@@ -1,7 +1,6 @@
 ﻿using System;
 using Ark.StepRunner.UnitTests.ScenarioMocks;
 using Ark.StepRunner.Exceptions;
-using Ark.StepRunner.TraceLogger;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Concurrent;
 using Moq;
@@ -12,12 +11,15 @@ namespace Ark.StepRunner.UnitTests
     using System.Linq;
     using Ark.StepRunner.CustomAttribute;
     using Autofac;
+    using Serilog;
+    using Serilog.Core;
+    using Serilog.Events;
 
     [TestClass]
     public class ScenarioRunnerTest
     {
 
-        private Mock<IStepPublisherLogger> _publisherLogger;
+        private Mock<ILogger> _logger;
         private ContainerBuilder _containerBuilder;
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -26,7 +28,7 @@ namespace Ark.StepRunner.UnitTests
         [TestInitialize]
         public void TestInitialize()
         {
-            _publisherLogger = new Mock<IStepPublisherLogger>();
+            _logger = new Mock<ILogger>();
             _containerBuilder = new ContainerBuilder();
 
 
@@ -39,7 +41,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_IsAScenarioAttributeDefine_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, _containerBuilder.Build());
+            var scenarioRunner = new ScenarioRunner(_logger.Object, _containerBuilder.Build());
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -49,7 +51,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_IsAStepScenarioAttribute_ReturnFalse()
         {
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, _containerBuilder.Build());
+            var scenarioRunner = new ScenarioRunner(_logger.Object, _containerBuilder.Build());
 
             Assert.IsFalse(scenarioRunner.RunScenario<ScnearioWithoutScenarioAttribute>().IsSuccessful);
         }
@@ -71,7 +73,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
             var result = scenarioRunner.RunScenario<RunAllStepsWithoutScenarioStepResult>();
 
             Assert.IsTrue(result.IsSuccessful);
@@ -99,7 +101,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepsWithtScenarioStepJumpToNextStep>();
 
@@ -131,7 +133,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepsAndPassingParametersBetweenSteps>();
 
@@ -161,7 +163,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenarioWithParameters<RunAllStepsAndPassingParametersBetweenSteps>(1, "111", 2, "222");
 
@@ -192,7 +194,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunStepsAndFaileDueToTimeout>();
 
@@ -222,7 +224,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<ScenarioStopRunningAfterException>();
 
@@ -280,7 +282,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesSteps>();
 
@@ -324,7 +326,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndBusinnesStepsAndCleanups>();
 
@@ -376,7 +378,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllSetupsAndInBusinnesStepsUntilExceptionOccureAndRunAllCleanups>();
 
@@ -432,7 +434,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<ThrowExceptionInSetupsAndJumpToRunAllCleanups>();
 
@@ -479,7 +481,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepsEvenThoughSetupThrowExceptionBusinnesStepsThrowExceptionCleanupsThrowException>();
 
@@ -535,7 +537,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
 
@@ -560,7 +562,7 @@ namespace Ark.StepRunner.UnitTests
 
             IContainer container = _containerBuilder.Build();
 
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepParallel>();
 
@@ -638,7 +640,7 @@ namespace Ark.StepRunner.UnitTests
 
 
             IContainer container = _containerBuilder.Build();
-            var scenarioRunner = new ScenarioRunner(_publisherLogger.Object, container);
+            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
             var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>();
 
@@ -680,7 +682,7 @@ namespace Ark.StepRunner.UnitTests
     }
 
 
-    internal class TestLogger : IStepPublisherLogger
+    internal class TestLogger : ILogger
     {
         private readonly ConcurrentQueue<string> _queue;
         private object _locker;
@@ -723,6 +725,387 @@ namespace Ark.StepRunner.UnitTests
         public void Warning(string message)
         {
             _queue.Enqueue(message);
+        }
+
+        public ILogger ForContext(ILogEventEnricher enricher)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILogger ForContext(IEnumerable<ILogEventEnricher> enrichers)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILogger ForContext(string propertyName, object value, bool destructureObjects = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILogger ForContext<TSource>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILogger ForContext(Type source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEvent logEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEventLevel level, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T>(LogEventLevel level, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T0, T1>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T0, T1, T2>(LogEventLevel level, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEventLevel level, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEventLevel level, Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T>(LogEventLevel level, Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T0, T1>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T0, T1, T2>(LogEventLevel level, Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write(LogEventLevel level, Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsEnabled(LogEventLevel level)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Verbose(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(string messageTemplate, params object[] propertyValues)
+        {
+            _queue.Enqueue(messageTemplate);
+        }
+
+        public void Debug(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Debug(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(string messageTemplate)
+        {
+            _queue.Enqueue(messageTemplate);
+        }
+
+        public void Information<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Information(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Warning(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(string messageTemplate, params object[] propertyValues)
+        {
+            _queue.Enqueue(messageTemplate);
+
+        }
+
+        public void Error(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Error(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T>(string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T0, T1>(string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T0, T1, T2>(string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(Exception exception, string messageTemplate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T>(Exception exception, string messageTemplate, T propertyValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T0, T1>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal<T0, T1, T2>(Exception exception, string messageTemplate, T0 propertyValue0, T1 propertyValue1, T2 propertyValue2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Fatal(Exception exception, string messageTemplate, params object[] propertyValues)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool BindMessageTemplate(string messageTemplate, object[] propertyValues, out MessageTemplate parsedTemplate, out IEnumerable<LogEventProperty> boundProperties)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool BindProperty(string propertyName, object value, bool destructureObjects, out LogEventProperty property)
+        {
+            throw new NotImplementedException();
         }
     }
 }
