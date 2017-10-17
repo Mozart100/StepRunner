@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Ark.StepRunner.CustomAttribute
 {
-    //[AttributeUsage(AttributeTargets.Parameter)]
+    [DebuggerStepThrough]
     [AttributeUsage(AttributeTargets.Class)]
     public class AScenarioAttribute : System.Attribute
     {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Ark.StepRunner.CustomAttribute
 {
+    [DebuggerStepThrough]
     [AttributeUsage(AttributeTargets.Method)]
     public class ABusinessStepScenarioAttribute : System.Attribute
     {

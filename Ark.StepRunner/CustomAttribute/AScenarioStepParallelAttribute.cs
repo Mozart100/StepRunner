@@ -1,10 +1,9 @@
 ﻿namespace Ark.StepRunner.CustomAttribute
 {
     using System;
+    using System.Diagnostics;
 
-
-    
-
+    [DebuggerStepThrough]
     [AttributeUsage(AttributeTargets.Method)]
     public class AScenarioStepParallelAttribute : Attribute
     {

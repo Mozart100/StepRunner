@@ -8,10 +8,11 @@ using Ark.StepRunner.Exceptions;
 using Ark.StepRunner.ScenarioStepResult;
 using Autofac;
 using Serilog;
+using System.Diagnostics;
 
 namespace Ark.StepRunner
 {
-
+    [DebuggerStepThrough]
     public class ScenarioRunner
     {
         private class ScenarioStepReturnVoid : ScenarioStepReturnBase
