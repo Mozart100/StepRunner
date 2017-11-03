@@ -9,10 +9,11 @@ using Ark.StepRunner.ScenarioStepResult;
 using Autofac;
 using Serilog;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Ark.StepRunner
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public class ScenarioRunner
     {
         private class ScenarioStepReturnVoid : ScenarioStepReturnBase
@@ -155,7 +156,7 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioRunner(ILogger  logger, IContainer containerBuilder)
+        public ScenarioRunner(ILogger logger, IContainer containerBuilder)
         {
             _containerBuilder = containerBuilder;
             _logger = logger;
@@ -339,7 +340,7 @@ namespace Ark.StepRunner
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private async Task<ScenarioStepReturnResultBundle> RunScenarioStep<TScenario>(
+        private Task<ScenarioStepReturnResultBundle> RunScenarioStep<TScenario>(
             TScenario scenario,
             MethodInfo method,
             TimeSpan timeout,
@@ -347,37 +348,38 @@ namespace Ark.StepRunner
             ABusinessStepScenarioAttribute businessStepScenario)
         {
             ScenarioStepReturnBase scenarioStepResult = null;
-            try
-            {
-                _logger.Information(string.Format("[{0}] Step was started.", businessStepScenario.Description));
-                //await Task.Yield();
-                await Task.Run(() =>
-                {
-                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
-                });
-            }
-            catch (AScenarioStepTimeoutException timeoutException)
-            {
-                _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
-                {
-                    var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
-                    return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
-                }
-            }
+            var task = Task.Run(() =>
+           {
+               try
+               {
+                   _logger.Information(string.Format("[{0}] Step was started.", businessStepScenario.Description));
+                  scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
+               }
+               catch (AScenarioStepTimeoutException timeoutException)
+               {
+                   _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to timeout.", businessStepScenario.Description));
+                   {
+                       var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: timeoutException);
+                       return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
+                   }
+               }
 
-            catch (Exception exception)
-            {
-                _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
+               catch (Exception exception)
+               {
+                   _logger.Error(string.Format("[{0}] Step was finished usuccessfully due to the following exception [{1}].", businessStepScenario.Description, exception));
 
-                {
-                    var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
-                    return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
-                }
-            }
+                   {
+                       var scenarioResult = new ScenarioResult(isSuccessful: false, numberScenarioStepInvoked: 1, exceptions: exception);
+                       return new ScenarioStepReturnResultBundle(new ScenarioStepReturnVoid(), scenarioResult);
+                   }
+               }
 
-            _logger.Information(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
+               _logger.Information(string.Format("[{0}] Step was finished successfully.", businessStepScenario.Description));
 
-            return new ScenarioStepReturnResultBundle(scenarioStepResult, new EmptyScenarioResult(numberScenarioStepInvoked: 1));
+               return new ScenarioStepReturnResultBundle(scenarioStepResult, new EmptyScenarioResult(numberScenarioStepInvoked: 1));
+           });
+
+            return task;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -424,11 +426,17 @@ namespace Ark.StepRunner
 
         private class MethodInvoker
         {
+            //CancellationTokenSource _cancelattionTokenSource;
+            //private CancellationToken _token;
+
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             public MethodInvoker()
             {
+                //_cancelattionTokenSource = new CancellationTokenSource();
+                //_token = _cancelattionTokenSource.Token;
+
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -445,21 +453,23 @@ namespace Ark.StepRunner
 
                 try
                 {
-                    var task = Invoke<TScenario>(scenario, methodInfo, parameters);
+                    var task = Invoke2<TScenario>(scenario, methodInfo, parameters);
 
                     if (timeout != TimeSpan.Zero && task.Wait(timeout: timeout) == false)
                     {
                         try
                         {
+                            //_cancelattionTokenSource.Cancel();
                             task.Dispose();
                         }
-                        catch (Exception)
+                        catch (Exception exception)
                         {
+                            //_cancelattionTokenSource.Cancel();
                             throw new AScenarioStepTimeoutException();
                         }
 
                     }
-                    result = task.Result;
+                    result = task.Result ?? new ScenarioStepReturnVoid(); ;
                 }
                 catch (Exception exception)
                 {
@@ -468,6 +478,31 @@ namespace Ark.StepRunner
 
 
                 return result;
+            }
+
+            //--------------------------------------------------------------------------------------------------------------------------------------
+
+            private Task<ScenarioStepReturnBase> Invoke2<TScenario>(
+           TScenario scenario,
+           MethodInfo method,
+           params object[] parameters)
+            {
+                //ScenarioStepReturnBase methodResult = null;
+
+                var task = Task.Run<ScenarioStepReturnBase>(() =>
+                {
+                    try
+                    {
+                        return method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
+                    }
+                    catch (Exception exception)
+                    {
+                        throw exception.InnerException;
+                    }
+                });
+
+                return task;
+                //return methodResult ?? new ScenarioStepReturnVoid();
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------

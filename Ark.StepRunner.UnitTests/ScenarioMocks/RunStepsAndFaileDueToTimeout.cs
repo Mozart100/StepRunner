@@ -58,8 +58,10 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
             var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
             _stepTracker.Enqueue(attribute.Index);
 
-            var task  = Task.Run(() => RunMethod4());
-            task.Wait();
+            //var task  = Task.Run(() => RunMethod4());
+            //task.Wait();
+
+            RunMethod4();
 
         }
 
@@ -74,10 +76,23 @@ namespace Ark.StepRunner.UnitTests.ScenarioMocks
             _stepTracker.Enqueue(attribute.Index);
         }
 
+        //[AStepCleanupScenario(index: (int)ScenarioSteps.Step3, description: "Cleanup")]
+        //public void Cleanup()
+        //{
+        //    //var method = MethodBase.GetCurrentMethod();
+        //    //var attribute = (ABusinessStepScenarioAttribute)method.GetCustomAttributes(typeof(ABusinessStepScenarioAttribute), true)[0];
+
+        //    //_stepTracker.Enqueue(attribute.Index);
+        //}
+
         //--------------------------------------------------------------------------------------------------------------------------------------
         private void RunMethod4()
         {
-            Thread.Sleep(TimeSpan.FromMinutes(1));
+            int loops = 60;
+            while (loops-- > 0)
+            {
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
         }
     }
 }
