@@ -282,6 +282,12 @@ namespace Ark.StepRunner
 
                 var resultBundle = taskScenarioStepBundle.Result;
 
+
+                _logger.Information("-------------------------------------------------------------------------------------------------------------------------------------");
+                _logger.Information("-------------------------------------------------------------------------------------------------------------------------------------");
+                _logger.Information("-------------------------------------------------------------------------------------------------------------------------------------");
+
+
                 scenarioResult += resultBundle.ScenarioResult;
 
                 if (resultBundle.ScenarioResult.IsSuccessful == false)
