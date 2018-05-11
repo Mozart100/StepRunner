@@ -33,7 +33,7 @@ namespace Ark.StepRunner
             private readonly AExceptionIgnoreAttribute _exceptionIgnoreAttribute;
             private readonly TimeSpan _timeout;
             private readonly AScenarioStepTimeoutAttribute _scenarioStepTimeoutAttribute;
-            private readonly AScenarioStepParallelAttribute _scenarioStepParallelAttribute;
+            //private readonly AScenarioStepParallelAttribute _scenarioStepParallelAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -42,14 +42,15 @@ namespace Ark.StepRunner
                 MethodInfo methodInfo,
                 ABusinessStepScenarioAttribute businessStepScenario,
                 AExceptionIgnoreAttribute exceptionIgnoreAttribute,
-                AScenarioStepTimeoutAttribute scenarioStepTimeoutAttribute,
-                AScenarioStepParallelAttribute scenarioStepParallelAttribute)
+                AScenarioStepTimeoutAttribute scenarioStepTimeoutAttribute
+                //,AScenarioStepParallelAttribute scenarioStepParallelAttribute
+                )
             {
                 _methodInfo = methodInfo;
                 _businessStepScenario = businessStepScenario;
                 _exceptionIgnoreAttribute = exceptionIgnoreAttribute;
                 _scenarioStepTimeoutAttribute = scenarioStepTimeoutAttribute;
-                _scenarioStepParallelAttribute = scenarioStepParallelAttribute;
+                //_scenarioStepParallelAttribute = scenarioStepParallelAttribute;
 
                 _timeout = ExtractTimeout(_methodInfo);
 
@@ -71,7 +72,7 @@ namespace Ark.StepRunner
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            public AScenarioStepParallelAttribute ScenarioStepParallelAttribute => _scenarioStepParallelAttribute;
+            //public AScenarioStepParallelAttribute ScenarioStepParallelAttribute => _scenarioStepParallelAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -86,13 +87,7 @@ namespace Ark.StepRunner
 
             private void Initialize()
             {
-                if (_scenarioStepParallelAttribute != null)
-                {
-                    if (_scenarioStepTimeoutAttribute == null)
-                    {
-                        throw new AScenarioStepTimeoutAttributeMissinigException();
-                    }
-                }
+               
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -261,7 +256,7 @@ namespace Ark.StepRunner
         {
             ScenarioResult scenarioResult = new EmptyScenarioResult();
             object[] previousParameters = null;
-            var tasks = new List<Tuple<int, Task<ScenarioStepReturnResultBundle>>>();
+            //var tasks = new List<Tuple<int, Task<ScenarioStepReturnResultBundle>>>();
 
             var orderedMethods = steps.OrderBy(x => x.Key).ToList();
 
@@ -269,16 +264,16 @@ namespace Ark.StepRunner
             {
                 var method = orderedMethods[index].Value.MethodInfo;
                 var timeout = orderedMethods[index].Value.Timeout;
-                var isParallel = orderedMethods[index].Value.ScenarioStepParallelAttribute != null;
+                //var isParallel = orderedMethods[index].Value.ScenarioStepParallelAttribute != null;
 
                 ScenarioResult scenarioResultCurrent;
                 var taskScenarioStepBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
 
-                if (isParallel == true)
-                {
-                    tasks.Add(new Tuple<int, Task<ScenarioStepReturnResultBundle>>(index++, taskScenarioStepBundle));
-                    continue;
-                }
+                //if (isParallel == true)
+                //{
+                //    tasks.Add(new Tuple<int, Task<ScenarioStepReturnResultBundle>>(index++, taskScenarioStepBundle));
+                //    continue;
+                //}
 
                 var resultBundle = taskScenarioStepBundle.Result;
 
@@ -322,23 +317,23 @@ namespace Ark.StepRunner
                 }
             }
 
-            var pureTasks = tasks.Select(x => x.Item2).ToArray();
-            Task.WaitAll(pureTasks);
-            foreach (var task in tasks)
-            {
-                scenarioResult += task.Item2.Result.ScenarioResult;
+            //var pureTasks = tasks.Select(x => x.Item2).ToArray();
+            //Task.WaitAll(pureTasks);
+            //foreach (var task in tasks)
+            //{
+            //    scenarioResult += task.Item2.Result.ScenarioResult;
 
-                if (task.Item2.Result.ScenarioResult.IsSuccessful == false)
-                {
-                    if (orderedMethods[task.Item1].Value.ExceptionIgnoreAttribute == null)
-                    {
-                        //return scenarioResult;
-                        continue;
-                    }
+            //    if (task.Item2.Result.ScenarioResult.IsSuccessful == false)
+            //    {
+            //        if (orderedMethods[task.Item1].Value.ExceptionIgnoreAttribute == null)
+            //        {
+            //            //return scenarioResult;
+            //            continue;
+            //        }
 
-                    scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
-                }
-            }
+            //        scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
+            //    }
+            //}
 
             return scenarioResult;
         }
@@ -398,27 +393,27 @@ namespace Ark.StepRunner
             foreach (var method in typeof(TScenario).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
                 var exceptionIgnoreAttribute = method.GetCustomAttribute<AExceptionIgnoreAttribute>();
-                var scenarioStepParallelAttribute = method.GetCustomAttribute<AScenarioStepParallelAttribute>();
+                //var scenarioStepParallelAttribute = method.GetCustomAttribute<AScenarioStepParallelAttribute>();
                 var timeoutAttribute = method.GetCustomAttribute<AScenarioStepTimeoutAttribute>();
 
                 var setupAttribute = method.GetCustomAttribute(typeof(AStepSetupScenarioAttribute)) as AStepSetupScenarioAttribute;
                 if (setupAttribute != null)
                 {
-                    _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    _scenarioSetups.Add(setupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: setupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute));
                     continue;
                 }
 
                 var cleanupAttribute = method.GetCustomAttribute(typeof(AStepCleanupScenarioAttribute)) as AStepCleanupScenarioAttribute;
                 if (cleanupAttribute != null)
                 {
-                    _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: cleanupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    _scenarioCleanups.Add(cleanupAttribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: cleanupAttribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute));
                     continue;
                 }
 
                 var attribute = method.GetCustomAttribute(typeof(ABusinessStepScenarioAttribute)) as ABusinessStepScenarioAttribute;
                 if (attribute != null)
                 {
-                    _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute, scenarioStepParallelAttribute: scenarioStepParallelAttribute));
+                    _scenarioSteps.Add(attribute.Index, new StepAndAttributeBundle(methodInfo: method, businessStepScenario: attribute, exceptionIgnoreAttribute: exceptionIgnoreAttribute, scenarioStepTimeoutAttribute: timeoutAttribute));
                 }
             }
         }

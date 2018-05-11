@@ -524,161 +524,161 @@ namespace Ark.StepRunner.UnitTests
 
         //Paralellisam
 
-        [TestMethod]
-        public void ScenarioRunner_AStepScenarioParallelAttributeShouldBeWithTimeoutAttribute_ThrowExceptionWithoutTimeout()
-        {
-            const int numberScenarioStepInvoked = 0;
-            //--------------------------------------------------------------------------------------------------------------------------------------
+        //[TestMethod]
+        //public void ScenarioRunner_AStepScenarioParallelAttributeShouldBeWithTimeoutAttribute_ThrowExceptionWithoutTimeout()
+        //{
+        //    const int numberScenarioStepInvoked = 0;
+        //    //--------------------------------------------------------------------------------------------------------------------------------------
 
-            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
-            _containerBuilder.RegisterType<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
-
-
-            IContainer container = _containerBuilder.Build();
-
-            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
-
-            var result = scenarioRunner.RunScenario<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
+        //    var queue = new StepTrack<ABusinessStepScenarioAttribute>();
+        //    _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+        //    _containerBuilder.RegisterType<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
 
 
-            Assert.IsFalse(result.IsSuccessful);
-            Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutAttributeMissinigException);
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+        //    IContainer container = _containerBuilder.Build();
 
-        }
+        //    var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
-        //--------------------------------------------------------------------------------------------------------------------------------------
-        [TestMethod]
-        public void ScenarioRunner_RunAllStepsParallel()
-        {
-            const int numberScenarioStepInvoked = 9;
-            //--------------------------------------------------------------------------------------------------------------------------------------
-            Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
-            _containerBuilder.RegisterType<RunAllStepParallel>();
+        //    var result = scenarioRunner.RunScenario<TimeoutAttributeMissingWhenParallelStepAttributeAppear>();
 
 
-            IContainer container = _containerBuilder.Build();
+        //    Assert.IsFalse(result.IsSuccessful);
+        //    Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutAttributeMissinigException);
+        //    Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
-            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
+        //}
 
-            var result = scenarioRunner.RunScenario<RunAllStepParallel>();
-
-            var index = 0;
-            //Assert.IsTrue(result.IsSuccessful,(++index).ToString());
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-
-            //Setups
-            var list = queue.ToList();
-            var dictionary = new HashSet<int>();
-            for (int i = 8; i > 0; i--)
-            {
-
-                Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
-
-
-            }
-            //return;
-            //cleaup
-            for (int i = 6; i < 9; i++)
-            {
-
-                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
-                if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
-                {
-                    throw new Exception("Should be between 6 and 9.");
-                }
-
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-
-            }
-
-            //Business
-            for (int i = 6; i < 3; i--)
-            {
-                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
-                if ((list.ElementAt(i).Index < 3) || (list.ElementAt(i).Index > 6))
-                {
-                    throw new Exception("Should be between 3 and 6.");
-                }
+        ////--------------------------------------------------------------------------------------------------------------------------------------
+        //[TestMethod]
+        //public void ScenarioRunner_RunAllStepsParallel()
+        //{
+        //    const int numberScenarioStepInvoked = 9;
+        //    //--------------------------------------------------------------------------------------------------------------------------------------
+        //    Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        //    var queue = new StepTrack<ABusinessStepScenarioAttribute>();
+        //    _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+        //    _containerBuilder.RegisterType<RunAllStepParallel>();
 
 
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+        //    IContainer container = _containerBuilder.Build();
 
-            }
+        //    var scenarioRunner = new ScenarioRunner(_logger.Object, container);
 
-            //Setup.
-            for (int i = 0; i < 3; i++)
-            {
-                if (list.ElementAt(i).Index > 3)
-                {
-                    throw new Exception("Should be less then 3");
-                }
+        //    var result = scenarioRunner.RunScenario<RunAllStepParallel>();
 
+        //    var index = 0;
+        //    //Assert.IsTrue(result.IsSuccessful,(++index).ToString());
+        //    Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
 
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-            }
+        //    //Setups
+        //    var list = queue.ToList();
+        //    var dictionary = new HashSet<int>();
+        //    for (int i = 8; i > 0; i--)
+        //    {
 
-
-        }
-
-        //--------------------------------------------------------------------------------------------------------------------------------------
-
-        [TestMethod]
-        public void ScenarioRunner_ParallelTimeout_ThrowTimeoutExceptionAndGoToCleanups()
-        {
-            var tmp = 5 | 6;
-            const int numberScenarioStepInvoked = 6;
-
-            //--------------------------------------------------------------------------------------------------------------------------------------
-
-            var queue = new StepTrack<ABusinessStepScenarioAttribute>();
-            _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
-            _containerBuilder.RegisterType<RunAllStepParallelAndInSetupThrowTimeoutException>();
+        //        Console.WriteLine("[{0}] Number is = [{1}]", i, list.ElementAt(i).Index);
 
 
-            IContainer container = _containerBuilder.Build();
-            var scenarioRunner = new ScenarioRunner(_logger.Object, container);
+        //    }
+        //    //return;
+        //    //cleaup
+        //    for (int i = 6; i < 9; i++)
+        //    {
 
-            var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>();
+        //        Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+        //        if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
+        //        {
+        //            throw new Exception("Should be between 6 and 9.");
+        //        }
 
-            Assert.IsFalse(result.IsSuccessful);
-            Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
-            Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+        //        Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
 
-            //Setups
-            var list = queue.ToList();
-            var dictionary = new HashSet<int>();
+        //    }
 
-            //cleaup
-            for (int i = 3; i < 5; i++)
-            {
-
-                Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
-                if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
-                {
-                    throw new Exception("Should be between 6 and 9.");
-                }
-
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-            }
-
-            //Setup.
-            for (int i = 0; i < 3; i++)
-            {
-                if (list.ElementAt(i).Index > 3)
-                {
-                    throw new Exception("Should be less then 3");
-                }
+        //    //Business
+        //    for (int i = 6; i < 3; i--)
+        //    {
+        //        Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+        //        if ((list.ElementAt(i).Index < 3) || (list.ElementAt(i).Index > 6))
+        //        {
+        //            throw new Exception("Should be between 3 and 6.");
+        //        }
 
 
-                Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
-            }
+        //        Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+
+        //    }
+
+        //    //Setup.
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        if (list.ElementAt(i).Index > 3)
+        //        {
+        //            throw new Exception("Should be less then 3");
+        //        }
 
 
-        }
+        //        Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+        //    }
+
+
+        //}
+
+        ////--------------------------------------------------------------------------------------------------------------------------------------
+
+        //[TestMethod]
+        //public void ScenarioRunner_ParallelTimeout_ThrowTimeoutExceptionAndGoToCleanups()
+        //{
+        //    var tmp = 5 | 6;
+        //    const int numberScenarioStepInvoked = 6;
+
+        //    //--------------------------------------------------------------------------------------------------------------------------------------
+
+        //    var queue = new StepTrack<ABusinessStepScenarioAttribute>();
+        //    _containerBuilder.Register(x => queue).As<StepTrack<ABusinessStepScenarioAttribute>>();
+        //    _containerBuilder.RegisterType<RunAllStepParallelAndInSetupThrowTimeoutException>();
+
+
+        //    IContainer container = _containerBuilder.Build();
+        //    var scenarioRunner = new ScenarioRunner(_logger.Object, container);
+
+        //    var result = scenarioRunner.RunScenario<RunAllStepParallelAndInSetupThrowTimeoutException>();
+
+        //    Assert.IsFalse(result.IsSuccessful);
+        //    Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
+        //    Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+
+        //    //Setups
+        //    var list = queue.ToList();
+        //    var dictionary = new HashSet<int>();
+
+        //    //cleaup
+        //    for (int i = 3; i < 5; i++)
+        //    {
+
+        //        Console.WriteLine("number is = [{0}]", list.ElementAt(i).Index);
+        //        if ((list.ElementAt(i).Index < 6) || (list.ElementAt(i).Index > 9))
+        //        {
+        //            throw new Exception("Should be between 6 and 9.");
+        //        }
+
+        //        Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+        //    }
+
+        //    //Setup.
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        if (list.ElementAt(i).Index > 3)
+        //        {
+        //            throw new Exception("Should be less then 3");
+        //        }
+
+
+        //        Assert.IsTrue(dictionary.Add(list.ElementAt(i).Index));
+        //    }
+
+
+        //}
     }
 
 
