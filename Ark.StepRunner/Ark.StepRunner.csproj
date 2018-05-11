@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="CustomAttribute\AExceptionIgnoreAttribute.cs" />
     <Compile Include="CustomAttribute\AScenarioAttribute.cs" />
-    <Compile Include="CustomAttribute\AScenarioStepParallelAttribute.cs" />
     <Compile Include="CustomAttribute\AScenarioStepTimeoutAttribute.cs" />
     <Compile Include="CustomAttribute\AStepCleanupScenarioAttribute.cs" />
     <Compile Include="CustomAttribute\ABusinessStepScenarioAttribute.cs" />

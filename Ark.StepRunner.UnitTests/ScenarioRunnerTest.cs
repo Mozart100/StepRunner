@@ -31,7 +31,6 @@ namespace Ark.StepRunner.UnitTests
             _logger = new Mock<ILogger>();
             _containerBuilder = new ContainerBuilder();
 
-
         }
 
 

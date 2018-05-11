@@ -33,7 +33,6 @@ namespace Ark.StepRunner
             private readonly AExceptionIgnoreAttribute _exceptionIgnoreAttribute;
             private readonly TimeSpan _timeout;
             private readonly AScenarioStepTimeoutAttribute _scenarioStepTimeoutAttribute;
-            //private readonly AScenarioStepParallelAttribute _scenarioStepParallelAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -42,15 +41,12 @@ namespace Ark.StepRunner
                 MethodInfo methodInfo,
                 ABusinessStepScenarioAttribute businessStepScenario,
                 AExceptionIgnoreAttribute exceptionIgnoreAttribute,
-                AScenarioStepTimeoutAttribute scenarioStepTimeoutAttribute
-                //,AScenarioStepParallelAttribute scenarioStepParallelAttribute
-                )
+                AScenarioStepTimeoutAttribute scenarioStepTimeoutAttribute)
             {
                 _methodInfo = methodInfo;
                 _businessStepScenario = businessStepScenario;
                 _exceptionIgnoreAttribute = exceptionIgnoreAttribute;
                 _scenarioStepTimeoutAttribute = scenarioStepTimeoutAttribute;
-                //_scenarioStepParallelAttribute = scenarioStepParallelAttribute;
 
                 _timeout = ExtractTimeout(_methodInfo);
 
@@ -69,10 +65,6 @@ namespace Ark.StepRunner
             //--------------------------------------------------------------------------------------------------------------------------------------
 
             public AExceptionIgnoreAttribute ExceptionIgnoreAttribute => _exceptionIgnoreAttribute;
-
-            //--------------------------------------------------------------------------------------------------------------------------------------
-
-            //public AScenarioStepParallelAttribute ScenarioStepParallelAttribute => _scenarioStepParallelAttribute;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -256,7 +248,6 @@ namespace Ark.StepRunner
         {
             ScenarioResult scenarioResult = new EmptyScenarioResult();
             object[] previousParameters = null;
-            //var tasks = new List<Tuple<int, Task<ScenarioStepReturnResultBundle>>>();
 
             var orderedMethods = steps.OrderBy(x => x.Key).ToList();
 
@@ -264,17 +255,9 @@ namespace Ark.StepRunner
             {
                 var method = orderedMethods[index].Value.MethodInfo;
                 var timeout = orderedMethods[index].Value.Timeout;
-                //var isParallel = orderedMethods[index].Value.ScenarioStepParallelAttribute != null;
 
                 ScenarioResult scenarioResultCurrent;
                 var taskScenarioStepBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
-
-                //if (isParallel == true)
-                //{
-                //    tasks.Add(new Tuple<int, Task<ScenarioStepReturnResultBundle>>(index++, taskScenarioStepBundle));
-                //    continue;
-                //}
-
                 var resultBundle = taskScenarioStepBundle.Result;
 
 
@@ -316,25 +299,7 @@ namespace Ark.StepRunner
                     index++;
                 }
             }
-
-            //var pureTasks = tasks.Select(x => x.Item2).ToArray();
-            //Task.WaitAll(pureTasks);
-            //foreach (var task in tasks)
-            //{
-            //    scenarioResult += task.Item2.Result.ScenarioResult;
-
-            //    if (task.Item2.Result.ScenarioResult.IsSuccessful == false)
-            //    {
-            //        if (orderedMethods[task.Item1].Value.ExceptionIgnoreAttribute == null)
-            //        {
-            //            //return scenarioResult;
-            //            continue;
-            //        }
-
-            //        scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
-            //    }
-            //}
-
+         
             return scenarioResult;
         }
 
@@ -393,7 +358,6 @@ namespace Ark.StepRunner
             foreach (var method in typeof(TScenario).GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
                 var exceptionIgnoreAttribute = method.GetCustomAttribute<AExceptionIgnoreAttribute>();
-                //var scenarioStepParallelAttribute = method.GetCustomAttribute<AScenarioStepParallelAttribute>();
                 var timeoutAttribute = method.GetCustomAttribute<AScenarioStepTimeoutAttribute>();
 
                 var setupAttribute = method.GetCustomAttribute(typeof(AStepSetupScenarioAttribute)) as AStepSetupScenarioAttribute;
