@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace Ark.StepRunner
 {
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public class ScenarioRunner
     {
         private class ScenarioStepReturnVoid : ScenarioStepReturnBase
@@ -79,7 +79,7 @@ namespace Ark.StepRunner
 
             private void Initialize()
             {
-               
+
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ namespace Ark.StepRunner
 
         private class ScenarioStepReturnResultBundle
         {
-            private readonly ScenarioStepReturnBase _scenarioSStepReturn;
+            private readonly ScenarioStepReturnBase _scenarioStepReturn;
             private readonly ScenarioResult _scenarioResult;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -110,13 +110,13 @@ namespace Ark.StepRunner
 
             public ScenarioStepReturnResultBundle(ScenarioStepReturnBase scenarioSStepReturn, ScenarioResult scenarioResult)
             {
-                _scenarioSStepReturn = scenarioSStepReturn;
+                _scenarioStepReturn = scenarioSStepReturn;
                 _scenarioResult = scenarioResult;
             }
 
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
-            public ScenarioStepReturnBase ScenarioSStepReturn => _scenarioSStepReturn;
+            public ScenarioStepReturnBase ScenarioStepReturn => _scenarioStepReturn;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -142,7 +142,7 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        public ScenarioRunner(ILogger  logger, IContainer containerBuilder)
+        public ScenarioRunner(ILogger logger, IContainer containerBuilder)
         {
             _containerBuilder = containerBuilder;
             _logger = logger;
@@ -257,8 +257,7 @@ namespace Ark.StepRunner
                 var timeout = orderedMethods[index].Value.Timeout;
 
                 ScenarioResult scenarioResultCurrent;
-                var taskScenarioStepBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
-                var resultBundle = taskScenarioStepBundle.Result;
+                var resultBundle = RunScenarioStep(scenario, method, timeout, previousParameters, orderedMethods[index].Value.BusinessStepScenario);
 
 
                 _logger.Information("-------------------------------------------------------------------------------------------------------------------------------------");
@@ -278,9 +277,9 @@ namespace Ark.StepRunner
                     scenarioResult |= new EmptyScenarioResult(isSuccessful: true);
                 }
 
-                previousParameters = resultBundle.ScenarioSStepReturn.Parameters;
+                previousParameters = resultBundle.ScenarioStepReturn.Parameters;
 
-                var scenarioStepJumpToStep = resultBundle.ScenarioSStepReturn as ScenarioStepJumpToStep;
+                var scenarioStepJumpToStep = resultBundle.ScenarioStepReturn as ScenarioStepJumpToStep;
 
                 if (scenarioStepJumpToStep != null)
                 {
@@ -299,13 +298,13 @@ namespace Ark.StepRunner
                     index++;
                 }
             }
-         
+
             return scenarioResult;
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
 
-        private async Task<ScenarioStepReturnResultBundle> RunScenarioStep<TScenario>(
+        private ScenarioStepReturnResultBundle RunScenarioStep<TScenario>(
             TScenario scenario,
             MethodInfo method,
             TimeSpan timeout,
@@ -316,11 +315,8 @@ namespace Ark.StepRunner
             try
             {
                 _logger.Information(string.Format("[{0}] Step was started.", businessStepScenario.Description));
-                //await Task.Yield();
-                await Task.Run(() =>
-                {
-                    scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
-                });
+                scenarioStepResult = _methodInvoker.MethodInvoke(scenario, method, timeout, previousParameters);
+
             }
             catch (AScenarioStepTimeoutException timeoutException)
             {
@@ -386,7 +382,7 @@ namespace Ark.StepRunner
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
         //--------------------------------------------------------------------------------------------------------------------------------------
-        [DebuggerStepThrough]
+        //[DebuggerStepThrough]
         private class MethodInvoker
         {
             //--------------------------------------------------------------------------------------------------------------------------------------
@@ -399,7 +395,7 @@ namespace Ark.StepRunner
             //--------------------------------------------------------------------------------------------------------------------------------------
             //--------------------------------------------------------------------------------------------------------------------------------------
 
-            [DebuggerStepThrough]
+            //[DebuggerStepThrough]
             public ScenarioStepReturnBase MethodInvoke<TScenario>(
                 TScenario scenario,
                 MethodInfo methodInfo,
@@ -411,7 +407,7 @@ namespace Ark.StepRunner
 
                 try
                 {
-                    var task = Invoke<TScenario>(scenario, methodInfo, parameters);
+                    var task = Task.Run(() => methodInfo.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase ?? new ScenarioStepReturnVoid());
 
                     if (timeout != TimeSpan.Zero && task.Wait(timeout: timeout) == false)
                     {
@@ -429,40 +425,11 @@ namespace Ark.StepRunner
                 }
                 catch (Exception exception)
                 {
-                    throw exception.InnerException ?? exception;
+
+                    throw exception?.InnerException?.InnerException ?? exception.InnerException ?? exception;
                 }
-
-
                 return result;
             }
-
-            //--------------------------------------------------------------------------------------------------------------------------------------
-            //--------------------------------------------------------------------------------------------------------------------------------------    
-
-            private async Task<ScenarioStepReturnBase> Invoke<TScenario>(
-              TScenario scenario,
-              MethodInfo method,
-              params object[] parameters)
-            {
-                ScenarioStepReturnBase methodResult = null;
-
-                var task = Task.Run(() =>
-                {
-                    try
-                    {
-                        methodResult = method.Invoke(scenario, parameters: parameters) as ScenarioStepReturnBase;
-                    }
-                    catch (Exception exception)
-                    {
-                        throw exception.InnerException;
-                    }
-                });
-
-                await task;
-
-                return methodResult ?? new ScenarioStepReturnVoid();
-            }
-
         }
     }
 }

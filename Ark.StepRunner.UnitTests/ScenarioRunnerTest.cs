@@ -116,7 +116,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenWithAutofacSteps()
         {
-            const int numberScenarioStepInvoked = 4;
+            const int numberScenarioStepInvoked = 6;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -139,6 +139,8 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.SetupPassingIEnumerable);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.SetupAcceptingParameter);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
@@ -150,7 +152,7 @@ namespace Ark.StepRunner.UnitTests
         [TestMethod]
         public void ScenarioRunner_RunAllStepsAndPassinParametersBetweenSteps()
         {
-            const int numberScenarioStepInvoked = 4;
+            const int numberScenarioStepInvoked = 6;
 
             //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -169,6 +171,9 @@ namespace Ark.StepRunner.UnitTests
 
             Assert.IsTrue(result.IsSuccessful);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
+
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.SetupPassingIEnumerable);
+            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.SetupAcceptingParameter);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
             Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step3);
@@ -200,8 +205,8 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is AScenarioStepTimeoutException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)RunStepsAndFaileDueToTimeout.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)RunStepsAndFaileDueToTimeout.ScenarioSteps.Step2);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
@@ -230,8 +235,8 @@ namespace Ark.StepRunner.UnitTests
             Assert.IsFalse(result.IsSuccessful);
             Assert.IsTrue(result.Exceptions.First() is NullReferenceException);
             Assert.AreEqual(numberScenarioStepInvoked, result.NumberScenarioStepInvoked);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step1);
-            Assert.IsTrue(queue.Dequeue() == (int)RunAllStepsAndPassingParametersBetweenSteps.ScenarioSteps.Step2);
+            Assert.IsTrue(queue.Dequeue() == (int)ScenarioStopRunningAfterException.ScenarioSteps.Step1);
+            Assert.IsTrue(queue.Dequeue() == (int)ScenarioStopRunningAfterException.ScenarioSteps.Step2);
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------
